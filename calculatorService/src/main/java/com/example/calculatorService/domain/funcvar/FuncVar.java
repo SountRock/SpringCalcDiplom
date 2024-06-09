@@ -1,4 +1,4 @@
-package com.example.calculatorService.domain;
+package com.example.calculatorService.domain.funcvar;
 
 
 import jakarta.annotation.Nonnull;
@@ -11,31 +11,30 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "function")
+@Table(name ="FuncVar")
 public class FuncVar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="`id`")
     private Long id;
 
+    @Column(name="`name`")
+    private String name;
+
+    @Column(name="`createDate`")
+    private LocalDateTime createDate;
+    ////////////////////////////////////////////////////////////////////
     @Nonnull
     @Column(name="`expression`")
     private String expression;
+
+    @Column(name="`result`")
+    private List<String> result;
+    ////////////////////////////////////////////////////////////////////
 
     public FuncVar(@Nonnull String expression) {
         this.expression = expression;
     }
 
     public FuncVar() {}
-
-    @Column(name="`name`")
-    private String name;
-
-    @Column(name="`result`")
-    //private List<List<String>> result;
-    private List<String> result;
-
-    @Column(name="`createDate`")
-    private LocalDateTime createDate;
-
 }

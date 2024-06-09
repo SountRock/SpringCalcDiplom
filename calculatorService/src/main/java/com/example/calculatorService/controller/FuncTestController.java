@@ -1,14 +1,13 @@
 package com.example.calculatorService.controller;
 
-import com.example.calculatorService.domain.FuncVar;
-import com.example.calculatorService.service.FuncVarService;
+import com.example.calculatorService.domain.funcvar.FuncVar;
+import com.example.calculatorService.service.ImplService.FuncVarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +58,9 @@ public class FuncTestController {
         temp.setName(name);
 
         String result = service.calculateFunction(temp);
-        if(!result.equals("Not found references")){
-            service.addFunc(temp);
+        if(!result.equals("One of Reference Result is empty") &&
+                !result.equals("Not Found") &&
+                !result.equals("Table is Null")){
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);

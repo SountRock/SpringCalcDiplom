@@ -3,6 +3,7 @@ package com.example.calculatorService.service.MathModels;
 import com.example.calculatorService.service.MathModels.Search.TwoSidesSearchModel;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +30,19 @@ public class ModelMultiplyv2 extends TwoSidesSearchModel {
 
                 return positionIndex - 1;
             } catch (NumberFormatException e){
-                return positionIndex + arguments.size() + 1;
+                //Обораичвание части с незвестной переменной
+                List<String> insertExpressionWithWrapper = new ArrayList<>();
+                insertExpressionWithWrapper.add("[");
+                insertExpressionWithWrapper.add(expression.get(positionIndex - 1));
+                insertExpressionWithWrapper.add("*");
+                insertExpressionWithWrapper.add(expression.get(positionIndex + 1));
+                insertExpressionWithWrapper.add("]");
+                for (int k = positionIndex - 1; k < positionIndex + 2; k++) {
+                    expression.remove(positionIndex - 1);
+                }
+                expression.addAll(positionIndex - 1, insertExpressionWithWrapper);
+
+                return positionIndex + arguments.size() + 3;
             }
         } else {
             return positionIndex + arguments.size() + 1;

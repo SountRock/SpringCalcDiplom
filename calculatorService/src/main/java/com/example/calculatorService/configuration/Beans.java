@@ -32,5 +32,4 @@ public class Beans {
     public PrepareExpression prepareExpression(){
         return new PrepareExpression();
     }
-
 }

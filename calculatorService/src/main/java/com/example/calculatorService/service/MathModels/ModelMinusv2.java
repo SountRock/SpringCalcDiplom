@@ -3,6 +3,7 @@ package com.example.calculatorService.service.MathModels;
 import com.example.calculatorService.service.MathModels.Search.TwoSidesSearchModel;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
