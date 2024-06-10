@@ -18,8 +18,10 @@ public class ModelFactorial extends RightSideSearchModel{
     public int operation(List<String> expression, int positionIndex, AnaliseExpression analizer) {
         List<String> arguments = searchArguments(expression, positionIndex, analizer);
 
-        if(arguments.size() < 2) {
+        if(arguments.size() == 1) {
             try {
+                Double.parseDouble(arguments.get(0)); //Проверямм число ли аргумент
+
                 String result = Double.toString(GammaFunc.gamma(Double.parseDouble(arguments.get(0)) + 1.0));
 
                 for (int k = positionIndex; k < positionIndex + 1; k++) {
@@ -29,6 +31,10 @@ public class ModelFactorial extends RightSideSearchModel{
                 expression.add(positionIndex, result);
                 return positionIndex + 1;
             } catch (NumberFormatException e){
+                arguments.add(0, "{");
+                arguments.add("}");
+                expression.addAll(positionIndex + 1, arguments);
+
                 return positionIndex + arguments.size() + 1;
             }
         } else {

@@ -53,8 +53,14 @@ public class TwoSidesSearchModel implements Operation {
         }
     }
 
+    /**
+     * Инкапслировано ли уже выражение
+     * @param start
+     * @param end
+     * @param expression
+     * @return
+     */
     protected boolean inBrackets(int start, int end, List<String> expression){
-        //*
         String[] bracketsStart = "[{(".split("");
         String[] bracketsEnd= "]})".split("");
         for (int i = 0; i < 3; i++) {
@@ -67,6 +73,12 @@ public class TwoSidesSearchModel implements Operation {
         return false;
     }
 
+    /**
+     * Евляеться ли элемент скобкой
+     * @param testIndex
+     * @param expression
+     * @return
+     */
     protected boolean isBracket(int testIndex, List<String> expression){
         String[] brackets = "[{(]})".split("");
         try {
@@ -82,14 +94,39 @@ public class TwoSidesSearchModel implements Operation {
         return false;
     }
 
+    /**
+     * Являеться ли элемет функцией или оператором
+     * @param testIndex
+     * @param expression
+     * @return
+     */
+    protected boolean isAnotherFunction(int testIndex, List<String> expression){
+        try {
+            Double.parseDouble(expression.get(testIndex));
+
+            return false;
+        } catch (IndexOutOfBoundsException e){
+            return false;
+        } catch (NumberFormatException e){
+            return true;
+        }
+    }
+
+    /**
+     * Инкапсулировать выражение
+     * @param positionIndex
+     * @param expression
+     * @return
+     */
     protected int encapsulateUncertainty(int positionIndex, List<String> expression){
-        int stepIndex = positionIndex + 3;
+        int stepIndex = positionIndex + 2;
         //Обораичвание части с незвестной переменной
-        //Если часть уже инкапсулировано или один из аргуметов является скобокой, то игнорируем ее
+        //Если часть уже инкапсулировано или один из аргуметов является скобокой
+        //или впереди вообще другая функция, то игнорируем ее
         if(inBrackets(positionIndex - 2, positionIndex + 2, expression) ||
-                isBracket(positionIndex - 1, expression)
-                ||
-                isBracket(positionIndex + 1, expression)
+                isBracket(positionIndex + 1, expression) ||
+                isBracket(positionIndex - 1, expression) ||
+                isBracket(positionIndex - 2, expression)
         ){
             return stepIndex;
         }
@@ -98,14 +135,13 @@ public class TwoSidesSearchModel implements Operation {
         List<String> insertExpressionWithWrapper = new ArrayList<>();
         insertExpressionWithWrapper.add("{");
         insertExpressionWithWrapper.add(expression.get(positionIndex - 1));
-        insertExpressionWithWrapper.add("*");
+        insertExpressionWithWrapper.add(operationIndex);
         insertExpressionWithWrapper.add(expression.get(positionIndex + 1));
         insertExpressionWithWrapper.add("}");
         for (int k = positionIndex - 1; k < positionIndex + 2; k++) {
             expression.remove(positionIndex - 1);
         }
         expression.addAll(positionIndex - 1, insertExpressionWithWrapper);
-        insertExpressionWithWrapper.clear();
 
         return stepIndex;
     }
