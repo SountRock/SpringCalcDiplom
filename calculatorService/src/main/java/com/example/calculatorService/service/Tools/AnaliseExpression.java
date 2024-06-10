@@ -31,6 +31,8 @@ public class AnaliseExpression {
         for (int i = 0; i < operations.size(); i++){
             for (int j = 0; j < exArr.size(); j++){
                 if(currentCountOfIteration > limitOfTheNumberOfCalculations){
+                    currentCountOfIteration = 0;
+
                     return exArr;
                 }
                 if(exArr.get(j).equals("(")){

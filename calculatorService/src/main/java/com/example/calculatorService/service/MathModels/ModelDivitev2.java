@@ -19,7 +19,7 @@ public class ModelDivitev2 extends TwoSidesSearchModel {
     public int operation(List<String> expression, int positionIndex, AnaliseExpression anaizer) {
         List<String> arguments = searchArguments(expression, positionIndex);
 
-        if(arguments.size() < 3) {
+        if(arguments.size() == 2) {
             try {
                 String temp = Double.toString(Double.parseDouble(arguments.get(0)) / Double.parseDouble(arguments.get(1)));
 
@@ -29,7 +29,7 @@ public class ModelDivitev2 extends TwoSidesSearchModel {
                 expression.add(positionIndex - 1, temp);
                 return positionIndex - 1;
             } catch (NumberFormatException e){
-                return positionIndex + arguments.size() + 1;
+                return encapsulateUncertainty(positionIndex, expression);
             }
         } else {
             return positionIndex + arguments.size() + 1;

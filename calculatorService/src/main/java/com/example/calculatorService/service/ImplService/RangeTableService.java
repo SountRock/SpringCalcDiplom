@@ -298,6 +298,7 @@ public class RangeTableService implements ReferenceService {
                 }
             }
             //На случай если переменные с диапазона обновились и их нужно вытащить из "обертки" в которую они попали ранее
+
             if(isAllPasted){
                 for (int i = 0; i < expressionTemp.size(); i++) {
                     if(!expressionTemp.get(i).equals("[") && expressionTemp.get(i).equals("]")){
