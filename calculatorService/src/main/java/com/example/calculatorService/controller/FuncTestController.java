@@ -57,21 +57,16 @@ public class FuncTestController {
         temp.setCreateDate(LocalDateTime.now());
         temp.setName(name);
 
-        String result = service.calculateFunction(temp);
-        if(!result.equals("One of Reference Result is empty") &&
-                !result.equals("Not Found") &&
-                !result.equals("Table is Null")){
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
-        }
+        ResponseEntity<String> result = service.calculateFunction(temp);
+        return result;
     }
 
     @PutMapping("calculateById/{id}")
     public ResponseEntity<String> calculate(@PathVariable("id") Long id){
         FuncVar temp = service.findById(id);
-        String result = service.calculateFunction(temp);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+
+        ResponseEntity<String> result = service.calculateFunction(temp);
+        return result;
     }
 
     @GetMapping("history")

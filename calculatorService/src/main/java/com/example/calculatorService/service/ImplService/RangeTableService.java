@@ -1,10 +1,10 @@
 package com.example.calculatorService.service.ImplService;
 
+import com.example.calculatorService.domain.table.rangeTable.Param;
 import com.example.calculatorService.domain.table.rangeTable.Range;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.domain.table.rangeTable.ResultWithParams;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
-import com.example.calculatorService.exceptions.TableExistException;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
 import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.repository.RangeTableRepository;
@@ -14,7 +14,8 @@ import com.example.calculatorService.service.Tools.PrepareExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -87,7 +88,7 @@ public class RangeTableService implements ReferenceService {
     /**
      * Расчитать функцию
      */
-    public String calculateTable(RangeTable table, List<Range> ranges){
+    public ResponseEntity<String> calculateTable(RangeTable table, List<Range> ranges){
         try {
             if(table != null){
                 //Подготовительный этап
@@ -109,7 +110,11 @@ public class RangeTableService implements ReferenceService {
                 if(results != null){
                     tableRepo.save(table);
                     for(ResultWithParams r : results) {
-                        resultsString += r.getHead() + " | " +
+                        List<Param> temp = r.getParams();
+                        for (Param p : temp) {
+                            resultsString += p.getName() + "=" + p.getValue() +"; ";
+                        }
+                        resultsString += " | " +
                                 r.getResult().toString()
                                 .replaceAll("\\[", "")
                                 .replaceAll("\\]", "")
@@ -128,16 +133,21 @@ public class RangeTableService implements ReferenceService {
                     throw new NullPointerException();
                 }
 
-                return resultsString;
+                return new ResponseEntity<>(resultsString, HttpStatus.OK);
             }
 
-            return "Table is Null";
+            return new ResponseEntity<>("Table is Null", HttpStatus.NOT_FOUND);
         } catch (NoSuchElementException e){
             e.printStackTrace();
-            return "Not Found";
-        } catch (NullPointerException e){
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        } catch (ReferenceResultIsEmpty e){
             e.printStackTrace();
-            return "One of Reference Result is empty OR Table Result is empty";
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (TableReferenceErrorException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (DataIntegrityViolationException e){
+            return new ResponseEntity<>("This name already exists", HttpStatus.CONFLICT);
         }
     }
 
@@ -182,12 +192,13 @@ public class RangeTableService implements ReferenceService {
             }
 
             List<String> result = analiser.analise(expressionTemp);
-            String head = "";
+            List<Param> params = new ArrayList<>();
             for (int i = 0; i < currentValues.length; i++) {
-                head += ranges.get(i).getName() + "=" + currentValues[i] + ";";
+                params.add(new Param(ranges.get(i).getName(), Double.toString(currentValues[i])));
             }
 
-            results.add(new ResultWithParams(head, result));
+            results.add(new ResultWithParams(params, result));
+
 
             if(!isEnd){
                 return calculateIteration(expression, ranges, currentValues, results);
@@ -202,7 +213,7 @@ public class RangeTableService implements ReferenceService {
     /**
      * Расчитать функцию
      */
-    public String calculateTable(RangeTable table, List<Range> ranges, int maxCountIteration) {
+    public ResponseEntity<String> calculateTable(RangeTable table, List<Range> ranges, int maxCountIteration) {
         try {
             if (table != null) {
                 //Подготовительный этап
@@ -229,7 +240,11 @@ public class RangeTableService implements ReferenceService {
                 if (results != null) {
                     tableRepo.save(table);
                     for (ResultWithParams r : results) {
-                        resultsString += r.getHead() + " | " +
+                        List<Param> temp = r.getParams();
+                        for (Param p : temp) {
+                            resultsString += p.getName() + "=" + p.getValue() +"; ";
+                        }
+                        resultsString += " | " +
                                 r.getResult().toString()
                                         .replaceAll("\\[", "")
                                         .replaceAll("\\]", "")
@@ -248,22 +263,21 @@ public class RangeTableService implements ReferenceService {
                     throw new NullPointerException();
                 }
 
-                return resultsString;
+                return new ResponseEntity<>(resultsString, HttpStatus.OK);
             }
 
-            return "Table is Null";
+            return new ResponseEntity<>("Table is Null", HttpStatus.NOT_FOUND);
         } catch (NoSuchElementException e){
             e.printStackTrace();
-            return "Not Found";
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
         } catch (ReferenceResultIsEmpty e){
             e.printStackTrace();
-            return e.getMessage();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (TableReferenceErrorException e){
             e.printStackTrace();
-            return e.getMessage();
-        } catch (TableExistException e){
-            e.printStackTrace();
-            return e.getMessage();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (DataIntegrityViolationException e){
+            return new ResponseEntity<>("This table name already exists", HttpStatus.CONFLICT);
         }
     }
 
@@ -309,12 +323,12 @@ public class RangeTableService implements ReferenceService {
             }
 
             List<String> result = analiser.analise(expressionTemp);
-            String head = "";
+            List<Param> params = new ArrayList<>();
             for (int i = 0; i < currentValues.length; i++) {
-                head += ranges.get(i).getName() + "=" + currentValues[i] + ";";
+                params.add(new Param(ranges.get(i).getName(), Double.toString(currentValues[i])));
             }
 
-            results.add(new ResultWithParams(head, result));
+            results.add(new ResultWithParams(params, result));
             currentCountIteration++;
 
             if(!isEnd){

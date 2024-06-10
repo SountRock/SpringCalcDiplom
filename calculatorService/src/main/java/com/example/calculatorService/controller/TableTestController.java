@@ -54,14 +54,8 @@ public class TableTestController {
             table.setCreateDate(LocalDateTime.now());
             table.setName(name);
 
-            String result = service.calculateTable(table, rangesList);
-            if(!result.equals("One of Reference Result is empty OR Table Result is empty") &&
-                    !result.equals("Not Found") &&
-                    !result.equals("Table is Null")){
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
-            }
+            ResponseEntity<String> result = service.calculateTable(table, rangesList);
+            return result;
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException e){
             e.printStackTrace();
             return new ResponseEntity<>("Syntax ranges error", HttpStatus.CONFLICT);
@@ -83,8 +77,8 @@ public class TableTestController {
                 Range range = new Range();
                 range.setName(nameNValue[0]);
                 String[] rangeInterval = nameNValue[1].split("\\.\\.");
-                range.setStart(Double.parseDouble(rangeInterval[0].replaceAll("\\.", "")));
-                range.setEnd(Double.parseDouble(rangeInterval[1].replaceAll("\\.", "")));
+                range.setStart(Double.parseDouble(rangeInterval[0]));
+                range.setEnd(Double.parseDouble(rangeInterval[1]));
 
                 double step = (range.getEnd() - range.getStart())/(countSteps);
                 range.setStep(step);
@@ -94,14 +88,8 @@ public class TableTestController {
             table.setCreateDate(LocalDateTime.now());
             table.setName(name);
 
-            String result = service.calculateTable(table, rangesList, countSteps);
-            if(!result.equals("One of Reference Result is empty OR Table Result is empty") &&
-                    !result.equals("Not Found") &&
-                    !result.equals("Table is Null")){
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
-            }
+            ResponseEntity<String> result = service.calculateTable(table, rangesList, countSteps);
+            return result;
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException e){
             e.printStackTrace();
             return new ResponseEntity<>("Syntax ranges error", HttpStatus.CONFLICT);

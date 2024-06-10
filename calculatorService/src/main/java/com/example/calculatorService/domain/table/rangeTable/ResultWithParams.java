@@ -15,8 +15,9 @@ public class ResultWithParams {
     @Column(name="`id`")
     private Long id;
 
-    @Column(name="`head`")
-    private String head;
+    @Column(name="`params`")
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    private List<Param> params;
 
     @Column(name="`result`")
     private List<String> result;
@@ -26,8 +27,8 @@ public class ResultWithParams {
     @JsonIgnore
     private RangeTable rangeTable;
 
-    public ResultWithParams(String head, List<String> result) {
-        this.head = head;
+    public ResultWithParams(List<Param> params, List<String> result) {
+        this.params = params;
         this.result = result;
     }
 

@@ -11,6 +11,8 @@ import com.example.calculatorService.service.Tools.PrepareExpression;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,7 +20,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-@AllArgsConstructor
 public class FuncVarService implements ReferenceService {
     @Autowired
     private FuncVarRepository funcRepo;
@@ -61,7 +62,7 @@ public class FuncVarService implements ReferenceService {
     /**
      * Расчитать функцию
      */
-    public String calculateFunction(FuncVar function){
+    public ResponseEntity<String> calculateFunction(FuncVar function){
         try {
             if(function != null){
                 List<String> prepareExpression = preparator.decompose(function.getExpression());
@@ -80,23 +81,25 @@ public class FuncVarService implements ReferenceService {
 
                     funcRepo.save(function);
 
-                    return result.toString()
-                            .replaceAll("\\[", "")
-                            .replaceAll("\\]", "")
-                            .replaceAll(",", "");
+                    return new ResponseEntity<>(
+                            result.toString()
+                                    .replaceAll("\\[", "")
+                                    .replaceAll("\\]", "")
+                                    .replaceAll(",", "")
+                    , HttpStatus.OK);
                 }
             }
 
-            return "Function is Null";
+            return new ResponseEntity<>("Function is Null", HttpStatus.NOT_FOUND);
         } catch (NoSuchElementException e){
             e.printStackTrace();
-            return "Not Found";
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
         } catch (ReferenceResultIsEmpty e){
             e.printStackTrace();
-            return e.getMessage();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (TableReferenceErrorException e){
             e.printStackTrace();
-            return e.getMessage();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
