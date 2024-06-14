@@ -19,8 +19,8 @@ public class Beans {
         operations.add(new ModelSquare());
         operations.add(new ModelDivitev2());
         operations.add(new ModelMultiplyv2());
-        operations.add(new ModelPlusv2());
         operations.add(new ModelMinusv2());
+        operations.add(new ModelPlusv2());
     }
 
     @Bean

@@ -4,6 +4,7 @@ import com.example.calculatorService.service.MathModels.Operation;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class TwoSidesSearchModel implements Operation {
         this.operationIndex = operationIndex;
     }
 
+    public TwoSidesSearchModel() {}
 
     @Override
     public int operation(List<String> expression, int positionIndex, AnaliseExpression anaizer) {
@@ -32,25 +34,103 @@ public class TwoSidesSearchModel implements Operation {
     }
 
     /**
-     * Метод поиска аргументов
+     * Найти аргументы с левой строны
      * @param expr
      * @param positionIndex
-     * @return argument list
+     * @return
      */
-    public List<String> searchArguments(List<String> expr, int positionIndex) {
-        int startPosition = positionIndex - 1;
-
-        try{
+    public List<String> searchLeftArguments(List<String> expr, int positionIndex) {
+        try {
+            List<String> argLeft = new ArrayList<>();
             List<String> arguments = new ArrayList<>();
-            String argument = expr.get(startPosition);
-            arguments.add(argument);
-            argument = expr.get(startPosition + 2);
-            arguments.add(argument);
+            if (!expr.get(positionIndex - 1).equals(")")) {
+                argLeft.add(expr.get(positionIndex - 1));
+            } else {
+                argLeft = compareLeft(expr, positionIndex - 1);
+                arguments.addAll(argLeft);
+            }
+            arguments.addAll(argLeft);
 
             return arguments;
-        } catch (NumberFormatException | IndexOutOfBoundsException e){
-            return expr;
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return new ArrayList<>();
         }
+    }
+
+    /**
+     * Собрать выраженив в скобках с левой стороны
+     * @param exArr
+     * @param indexStart
+     * @return
+     */
+    public List<String> compareLeft(List<String> exArr, int indexStart){
+        List<String> temp = new ArrayList<>();
+
+        byte Continue = 0;
+        byte closeCount = 1;
+        int index = indexStart - 1;
+        while(Continue < closeCount && index > -1){
+            if(exArr.get(index).equals(")")){
+                closeCount++;
+            }
+
+            temp.add(exArr.get(index));
+            Continue += exArr.get(index).equals("(") ? 1 : 0;
+            index--;
+        }
+        temp.remove(temp.size() - 1);
+
+        Collections.reverse(temp);
+        return temp;
+    }
+
+    /**
+     * Найти аргументы с правой строны
+     * @param expr
+     * @param positionIndex
+     * @return
+     */
+    public List<String> searchRightArguments(List<String> expr, int positionIndex) {
+        try {
+            List<String> argRight = new ArrayList<>();
+            List<String> arguments = new ArrayList<>();
+            if (!expr.get(positionIndex + 1).equals("(")) {
+                argRight.add(expr.get(positionIndex + 1));
+            } else {
+                argRight = compareRight(expr, positionIndex + 1);
+                arguments.addAll(argRight);
+            }
+            arguments.addAll(argRight);
+
+            return arguments;
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Собрать выраженив в скобках с правой стороны
+     * @param exArr
+     * @param indexStart
+     * @return
+     */
+    public List<String> compareRight(List<String> exArr, int indexStart){
+        List<String> temp = new ArrayList<>();
+
+        byte Continue = 0;
+        byte closeCount = 1;
+        int index = indexStart + 1;
+        while(Continue < closeCount && index < exArr.size()){
+            if(exArr.get(index).equals("("))
+                closeCount++;
+
+            temp.add(exArr.get(index));
+            Continue += exArr.get(index).equals(")") ? 1 : 0;
+            index++;
+        }
+        temp.remove(temp.size() - 1);
+
+        return temp;
     }
 
     /**
@@ -92,24 +172,6 @@ public class TwoSidesSearchModel implements Operation {
         }
 
         return false;
-    }
-
-    /**
-     * Являеться ли элемет функцией или оператором
-     * @param testIndex
-     * @param expression
-     * @return
-     */
-    protected boolean isAnotherFunction(int testIndex, List<String> expression){
-        try {
-            Double.parseDouble(expression.get(testIndex));
-
-            return false;
-        } catch (IndexOutOfBoundsException e){
-            return false;
-        } catch (NumberFormatException e){
-            return true;
-        }
     }
 
     /**

@@ -19,14 +19,21 @@ public class CustomFunctionVar {
     @Column(name="`name`")
     private String name;
 
-    @Column(name="`result`")
-    private List<String> result;
+    @Column(name="`expression`")
+    private List<String> expression;
+    @Column(name="`value`")
+    private List<String> value;
+    @Column(name="`defaultValue`")
+    private List<String> defaultValue;
 
     @Column(name="`type`")
+    @Enumerated
     private TypeVar type;
 
+    /*
     @ManyToOne
     @JoinColumn(name = "customFunction_id")
     @JsonIgnore
     private CustomFunction customFunction;
+     */
 }

@@ -1,3 +1,3 @@
 package com.example.calculatorService.domain.customFunc;
 
-public enum TypeVar { INPUT, INNER}
+public enum TypeSearch {TWO_SIDES, RIGHT_SIDE}

@@ -1,11 +1,15 @@
 package com.example.calculatorService.service;
 
+import com.example.calculatorService.domain.customFunc.CustomFunction;
 import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
+import com.example.calculatorService.repository.CustomFunctionRepository;
 import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.repository.RangeTableRepository;
+import com.example.calculatorService.service.MathModels.ModelCustomRightSide;
+import com.example.calculatorService.service.MathModels.ModelCustomTwoSides;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
 
@@ -339,5 +343,32 @@ public interface ReferenceService {
         }
 
         return params;
+    }
+
+    default List<String> findNCalculateCustomFunc(List<String> expression, CustomFunctionRepository customRepo, FuncVarRepository funcRepo, RangeTableRepository tableRepo, AnaliseExpression analiser) {
+        try {
+            List<CustomFunction> funcs = customRepo.findAll();
+
+            for (CustomFunction c : funcs) {
+                for (int i = 0; i < expression.size(); i++) {
+                    if (expression.get(i).equals(c.getName())){
+                        switch (c.getTypeSearch()){
+                            case TWO_SIDES:
+                                ModelCustomTwoSides model1 = new ModelCustomTwoSides(c, funcRepo, tableRepo);
+                                i = model1.operation(expression, i, analiser);
+                                break;
+                            case RIGHT_SIDE:
+                                ModelCustomRightSide model2 = new ModelCustomRightSide(c);
+                                i = model2.operation(expression, i, analiser);
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return expression;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 }

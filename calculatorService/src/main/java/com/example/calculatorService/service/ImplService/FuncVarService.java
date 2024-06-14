@@ -3,12 +3,12 @@ package com.example.calculatorService.service.ImplService;
 import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
+import com.example.calculatorService.repository.CustomFunctionRepository;
 import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.repository.RangeTableRepository;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,7 @@ public class FuncVarService implements ReferenceService {
     @Autowired
     private FuncVarRepository funcRepo;
     private RangeTableRepository tableRepo;
+    private CustomFunctionRepository customRepo;
 
     @Autowired
     private AnaliseExpression analiser;
@@ -33,6 +34,11 @@ public class FuncVarService implements ReferenceService {
     @Autowired
     public void setTableRepo(@Lazy RangeTableRepository tableRepo) {
         this.tableRepo = tableRepo;
+    }
+
+    @Autowired
+    public void setCustomRepo(@Lazy CustomFunctionRepository customRepo) {
+        this.customRepo = customRepo;
     }
 
     /**
@@ -74,6 +80,9 @@ public class FuncVarService implements ReferenceService {
                 prepareExpression = findRangeTableReferencesById(prepareExpression, tableRepo);
                 prepareExpression = findRangeTableReferencesByName(prepareExpression, tableRepo);
                 prepareExpression = calculateRangeTableReferences(prepareExpression, tableRepo, analiser);
+
+                //Проверям наличие ссылок на Custom Function
+                prepareExpression = findNCalculateCustomFunc(prepareExpression, customRepo, funcRepo, tableRepo, analiser);
 
                 if(prepareExpression != null){
                     List<String> result = analiser.analise(prepareExpression);

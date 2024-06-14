@@ -3,6 +3,7 @@ package com.example.calculatorService.service.MathModels.Search;
 import com.example.calculatorService.service.MathModels.Operation;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 
+import java.util.ArrayList;
 import java.util.List;
 /**
  * Политика поиска аргументов с правой стороны от индификатора
@@ -17,6 +18,8 @@ public class RightSideSearchModel implements Operation {
     public RightSideSearchModel(String operationIndex) {
         this.operationIndex = operationIndex;
     }
+
+    public RightSideSearchModel() {}
 
     @Override
     public int operation(List<String> expression, int positionIndex, AnaliseExpression anaizer) {
@@ -43,7 +46,7 @@ public class RightSideSearchModel implements Operation {
             List<String> temp = anaizer.compare(expr, positionIndex + 1, "(", ")");
             return anaizer.analise(temp);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            return expr;
+            return new ArrayList<>();
         }
     }
 }
