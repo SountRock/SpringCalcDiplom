@@ -1,8 +1,9 @@
-package com.example.calculatorService.configuration;
+package com.example.functionRepositoryService.configuration;
 
-import com.example.calculatorService.service.MathModels.*;
-import com.example.calculatorService.service.Tools.AnaliseExpression;
-import com.example.calculatorService.service.Tools.PrepareExpression;
+
+import com.example.functionRepositoryService.service.MathModels.*;
+import com.example.functionRepositoryService.service.Tools.AnaliseExpression;
+import com.example.functionRepositoryService.service.Tools.PrepareExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;

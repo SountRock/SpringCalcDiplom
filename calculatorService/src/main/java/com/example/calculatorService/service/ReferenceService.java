@@ -248,7 +248,7 @@ public interface ReferenceService {
      * @param expression
      * @return
      */
-    default List<String> calculateRangeTableReferences(List<String> expression, RangeTableRepository tableRepo, AnaliseExpression analiser) throws NoSuchElementException, ReferenceResultIsEmpty, TableReferenceErrorException{
+    default List<String> calculateRangeTableReferences(List<String> expression, RangeTableRepository tableRepo, CustomFunctionRepository customRepo, AnaliseExpression analiser) throws NoSuchElementException, ReferenceResultIsEmpty, TableReferenceErrorException{
         if(expression == null){
             return null;
         }
@@ -304,6 +304,7 @@ public interface ReferenceService {
                         }
                     }
                     //Анализируем подготовленное выражение
+                    result = findNCalculateCustomFunc(result, customRepo, analiser);
                     result = analiser.analise(result);
 
                     //Удаляем функцию в две стадии
@@ -345,7 +346,7 @@ public interface ReferenceService {
         return params;
     }
 
-    default List<String> findNCalculateCustomFunc(List<String> expression, CustomFunctionRepository customRepo, FuncVarRepository funcRepo, RangeTableRepository tableRepo, AnaliseExpression analiser) {
+    default List<String> findNCalculateCustomFunc(List<String> expression, CustomFunctionRepository customRepo, AnaliseExpression analiser) {
         try {
             List<CustomFunction> funcs = customRepo.findAll();
 
@@ -354,7 +355,7 @@ public interface ReferenceService {
                     if (expression.get(i).equals(c.getName())){
                         switch (c.getTypeSearch()){
                             case TWO_SIDES:
-                                ModelCustomTwoSides model1 = new ModelCustomTwoSides(c, funcRepo, tableRepo);
+                                ModelCustomTwoSides model1 = new ModelCustomTwoSides(c);
                                 i = model1.operation(expression, i, analiser);
                                 break;
                             case RIGHT_SIDE:

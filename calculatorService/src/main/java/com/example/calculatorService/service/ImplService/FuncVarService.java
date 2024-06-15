@@ -6,9 +6,11 @@ import com.example.calculatorService.exceptions.TableReferenceErrorException;
 import com.example.calculatorService.repository.CustomFunctionRepository;
 import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.repository.RangeTableRepository;
+import com.example.calculatorService.service.CustomFuncRepositoryConnectServer;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@AllArgsConstructor
 public class FuncVarService implements ReferenceService {
     @Autowired
     private FuncVarRepository funcRepo;
@@ -79,10 +82,10 @@ public class FuncVarService implements ReferenceService {
                 //Проверям наличие ссылок с RangeTable
                 prepareExpression = findRangeTableReferencesById(prepareExpression, tableRepo);
                 prepareExpression = findRangeTableReferencesByName(prepareExpression, tableRepo);
-                prepareExpression = calculateRangeTableReferences(prepareExpression, tableRepo, analiser);
+                prepareExpression = calculateRangeTableReferences(prepareExpression, tableRepo, customRepo, analiser);
 
                 //Проверям наличие ссылок на Custom Function
-                prepareExpression = findNCalculateCustomFunc(prepareExpression, customRepo, funcRepo, tableRepo, analiser);
+                prepareExpression = findNCalculateCustomFunc(prepareExpression, customRepo, analiser);
 
                 if(prepareExpression != null){
                     List<String> result = analiser.analise(prepareExpression);

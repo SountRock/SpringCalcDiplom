@@ -6,6 +6,7 @@ import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.domain.table.rangeTable.ResultWithParams;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
+import com.example.calculatorService.repository.CustomFunctionRepository;
 import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.repository.RangeTableRepository;
 import com.example.calculatorService.service.ReferenceService;
@@ -24,8 +25,9 @@ import java.util.*;
 @Service
 public class RangeTableService implements ReferenceService {
     @Autowired
-    private FuncVarRepository funcRepo;
     private RangeTableRepository tableRepo;
+    private FuncVarRepository funcRepo;
+    private CustomFunctionRepository customRepo;
 
     @Autowired
     private AnaliseExpression analiser;
@@ -33,8 +35,13 @@ public class RangeTableService implements ReferenceService {
     private PrepareExpression preparator;
 
     @Autowired
-    public void setTableRepo(@Lazy RangeTableRepository tableRepo) {
-        this.tableRepo = tableRepo;
+    public void setTableRepo(@Lazy FuncVarRepository funcRepo) {
+        this.funcRepo = funcRepo;
+    }
+
+    @Autowired
+    public void setCustomRepo(@Lazy CustomFunctionRepository customRepo) {
+        this.customRepo = customRepo;
     }
 
     /**
@@ -101,6 +108,11 @@ public class RangeTableService implements ReferenceService {
                 //Проверям наличие ссылок с FuncVar
                 prepareExpression = findFuncVarReferencesById(prepareExpression, funcRepo);
                 prepareExpression = findFuncVarReferencesByName(prepareExpression, funcRepo);
+
+                //Проверям наличие ссылок с RangeTable
+                prepareExpression = findRangeTableReferencesById(prepareExpression, tableRepo);
+                prepareExpression = findRangeTableReferencesByName(prepareExpression, tableRepo);
+                prepareExpression = calculateRangeTableReferences(prepareExpression, tableRepo, customRepo, analiser);
 
                 //Расчитываем значения
                 List<ResultWithParams> results = new ArrayList<>();
@@ -191,7 +203,9 @@ public class RangeTableService implements ReferenceService {
                 }
             }
 
-            List<String> result = analiser.analise(expressionTemp);
+            //Проверям наличие ссылок на Custom Function
+            List<String> result = findNCalculateCustomFunc(expressionTemp, customRepo, analiser);
+            result = analiser.analise(expressionTemp);
             List<Param> params = new ArrayList<>();
             for (int i = 0; i < currentValues.length; i++) {
                 params.add(new Param(ranges.get(i).getName(), Double.toString(currentValues[i])));
@@ -230,7 +244,7 @@ public class RangeTableService implements ReferenceService {
                 //Проверям наличие ссылок с RangeTable
                 prepareExpression = findRangeTableReferencesById(prepareExpression, tableRepo);
                 prepareExpression = findRangeTableReferencesByName(prepareExpression, tableRepo);
-                prepareExpression = calculateRangeTableReferences(prepareExpression, tableRepo, analiser);
+                prepareExpression = calculateRangeTableReferences(prepareExpression, tableRepo, customRepo, analiser);
 
                 //Расчитываем значения
                 List<ResultWithParams> results = new ArrayList<>();
@@ -322,7 +336,9 @@ public class RangeTableService implements ReferenceService {
                 }
             }
 
-            List<String> result = analiser.analise(expressionTemp);
+            //Проверям наличие ссылок на Custom Function
+            List<String> result = findNCalculateCustomFunc(expressionTemp, customRepo, analiser);
+            result = analiser.analise(expressionTemp);
             List<Param> params = new ArrayList<>();
             for (int i = 0; i < currentValues.length; i++) {
                 params.add(new Param(ranges.get(i).getName(), Double.toString(currentValues[i])));

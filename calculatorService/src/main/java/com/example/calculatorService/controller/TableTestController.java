@@ -95,6 +95,4 @@ public class TableTestController {
             return new ResponseEntity<>("Syntax ranges error", HttpStatus.CONFLICT);
         }
     }
-
-
 }

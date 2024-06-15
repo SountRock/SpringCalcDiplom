@@ -1,26 +1,24 @@
-package com.example.calculatorService.service.ImplService;
+package com.example.functionRepositoryService.service.ImplService;
 
-import com.example.calculatorService.domain.customFunc.CustomFunction;
-import com.example.calculatorService.domain.customFunc.CustomFunctionVar;
-import com.example.calculatorService.domain.customFunc.TypeSearch;
-import com.example.calculatorService.domain.customFunc.TypeVar;
-import com.example.calculatorService.repository.CustomFunctionRepository;
-import com.example.calculatorService.repository.FuncVarRepository;
-import com.example.calculatorService.repository.RangeTableRepository;
-import com.example.calculatorService.service.MathModels.*;
-import com.example.calculatorService.service.ReferenceService;
-import com.example.calculatorService.service.Tools.AnaliseExpression;
-import com.example.calculatorService.service.Tools.PrepareExpression;
+import com.example.functionRepositoryService.domain.CustomFunction;
+import com.example.functionRepositoryService.domain.CustomFunctionVar;
+import com.example.functionRepositoryService.domain.TypeSearch;
+import com.example.functionRepositoryService.domain.TypeVar;
+import com.example.functionRepositoryService.repository.CustomFunctionRepository;
+import com.example.functionRepositoryService.service.ReferenceService;
+import com.example.functionRepositoryService.service.Tools.AnaliseExpression;
+import com.example.functionRepositoryService.service.Tools.PrepareExpression;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -33,27 +31,23 @@ public class CustomFuncService implements ReferenceService {
     @Autowired
     private PrepareExpression preparator;
 
-    @Value("${links.funcRepository}")
-    private String funcRepositoryLink;
+    @Value("${links.calculatorServer}")
+    private String calculatorServerLink;
     @Autowired
     private RestTemplate template;
     @Autowired
     private HttpHeaders headers;
+    private long lastAddedFuncId = 0;
 
-    public void loadCustomFunc() {
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<CustomFunction[]> response = template.exchange(funcRepositoryLink, HttpMethod.GET, entity, CustomFunction[].class);
-
-        if(response.getStatusCode() == HttpStatus.OK){
-            customRepo.saveAll(List.of(response.getBody()));
-        }
-    }
-
-    /*
-    //описание шагов: name_step1=step_expression1<default_value&name_step2=step_expression2<default_value:count_repeat
-    //описание шапки функции: func_name(input_var1,input_var2,input_var3):type
+    /**
+     * Метод создания своей функции
+     * Описание шагов: name_step1=step_expression1<default_value&name_step2=step_expression2<default_value:count_repeat
+     * Описание шапки функции: func_name(input_var1,input_var2,input_var3):type
+     * @param head
+     * @param steps
+     * @return
+     */
     public ResponseEntity<String> createCustomFunc(String head, String steps) {
         CustomFunction newFunc = new CustomFunction();
         List<CustomFunctionVar> vars = new ArrayList<>();
@@ -140,14 +134,31 @@ public class CustomFuncService implements ReferenceService {
 
         try {
             customRepo.save(newFunc);
+            lastAddedFuncId = newFunc.getId();
+
+            ResponseEntity response = pushMessageONCalculatorServer("ADD_NEW_C_FUNC");
+            if(response.getStatusCode() == HttpStatus.ACCEPTED){
+                return new ResponseEntity<>(newFunc.toString(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(newFunc + "[NOT PUSH ON CALCULATE SERVER]",
+                        response.getStatusCode());
+            }
         } catch (DataIntegrityViolationException e){
             return new ResponseEntity<>("This Custom Function name already exists", HttpStatus.CONFLICT);
         }
-
-
-        return new ResponseEntity<>(newFunc.toString(), HttpStatus.OK);
     }
-     */
+
+    public ResponseEntity pushMessageONCalculatorServer(String message){
+        try{
+            HttpEntity<String> entity = new HttpEntity<>(new String(message));
+            ResponseEntity<String> response = template.exchange(calculatorServerLink + "/message",HttpMethod.POST, entity, String.class);
+
+            return response;
+        } catch (ResourceAccessException e){
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
 
     public ResponseEntity<List<String>> findNCalculateCustomFuncOnService(List<String> expression) {
         List<String> result = findNCalculateCustomFunc(expression, customRepo, analiser);
@@ -158,7 +169,11 @@ public class CustomFuncService implements ReferenceService {
         }
     }
 
-    public List<CustomFunction> findAll(){
-        return customRepo.findAll();
+    public ResponseEntity<List<CustomFunction>> findAll(){
+        return new ResponseEntity<>(customRepo.findAll(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<CustomFunction> getLast(){
+        return new ResponseEntity<>(customRepo.findById(lastAddedFuncId).get(), HttpStatus.OK);
     }
 }

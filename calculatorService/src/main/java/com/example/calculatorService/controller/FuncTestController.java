@@ -1,6 +1,7 @@
 package com.example.calculatorService.controller;
 
 import com.example.calculatorService.domain.funcvar.FuncVar;
+import com.example.calculatorService.service.CustomFuncRepositoryConnectServer;
 import com.example.calculatorService.service.ImplService.FuncVarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,8 @@ import java.util.List;
 public class FuncTestController {
     @Autowired
     private FuncVarService service;
+    @Autowired
+    private CustomFuncRepositoryConnectServer connect;
 
     @PostMapping("add")
     public ResponseEntity addFunc(@RequestBody FuncVar funcVar){
@@ -30,7 +33,7 @@ public class FuncTestController {
         FuncVar temp = new FuncVar("1+1");
         temp.setResult(new ArrayList<>(List.of("12", "13")));
         temp.setCreateDate(LocalDateTime.now());
-        temp.setName("one");
+        temp.setName("form");
 
         return new ResponseEntity<>(temp, HttpStatus.OK);
     }
@@ -79,4 +82,17 @@ public class FuncTestController {
         return new ResponseEntity<>(service.getFuncByName(name), HttpStatus.OK);
     }
 
+    @PostMapping("/message")
+    public ResponseEntity postMessage(@RequestBody String message){
+        if(message.equals("ADD_NEW_C_FUNC")){
+            ResponseEntity response = connect.loadLastFunc();
+            if(response.getStatusCode() == HttpStatus.OK){
+                return new ResponseEntity<>("Successful added", HttpStatus.ACCEPTED);
+            } else {
+                return new ResponseEntity<>("Failed added", HttpStatus.CONFLICT);
+            }
+        }
+
+        return new ResponseEntity<>("Successful receipt", HttpStatus.OK);
+    }
 }
