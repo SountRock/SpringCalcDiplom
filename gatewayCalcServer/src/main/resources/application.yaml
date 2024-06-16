@@ -1,0 +1,22 @@
+server:
+  port: 8765
+
+spring:
+  application:
+    name: gatewayCalcServer
+
+cloud:
+  gateway:
+    routes:
+      - id: functionRepositoryService
+        uri: http://localhost:8090/
+        predicates:
+          - Path=/СRepo/**
+      - id: calculatorFuncService
+        uri: http://localhost:8080/
+        predicates:
+          - Path=/test/**
+      - id: calculatorRangeTableService
+        uri: http://localhost:8080/
+        predicates:
+          - Path=/tTable/**

@@ -11,13 +11,14 @@ import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
 
+import java.beans.Expression;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Модель для вычисления пользовательских функции с типом TwoSidesSearch
  */
-public class ModelCustomTwoSides extends TwoSidesSearchModel implements ReferenceService, CustomOperation {
+public class ModelCustomTwoSides extends TwoSidesSearchModel implements CustomOperation {
     private CustomFunction cFunc;
 
     public ModelCustomTwoSides(CustomFunction cFunc) {
@@ -29,8 +30,10 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements Referenc
         try {
             List<String> leftArguments = searchLeftArguments(expression, positionIndex);
             List<String> rightArguments = searchRightArguments(expression, positionIndex);
-            int startPosition = positionIndex - leftArguments.size()/2 - 2;
-            int endPosition = positionIndex + rightArguments.size()/2 + 3;
+            int startPosition = leftArguments.size() > 1 ?
+                    positionIndex - leftArguments.size()/2 - 2 : positionIndex - 1;
+            int endPosition = rightArguments.size() > 1 ?
+                    positionIndex + rightArguments.size()/2 + 3 : positionIndex + 2;
 
             List<CustomFunctionVar> inputVars = cFunc.getSteps().stream().filter(v -> v.getType() == TypeVar.INPUT).toList();
             List<CustomFunctionVar> innerVars = cFunc.getSteps().stream().filter(v -> v.getType() == TypeVar.INNER).toList();
@@ -81,20 +84,12 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements Referenc
             } while (i < count);
 
             List<String> result = innerVars.get(innerVars.size() - 1).getValue();
-            if(endPosition - startPosition > 3){
-                //Вставляем значение из последней внутреней переменной
-                expression.addAll(startPosition, result);
+            //Вставляем значение из последней внутреней переменной
+            expression.addAll(startPosition, result);
 
-                //Удаляем больше ненужное "обращение"
-                for (int k = 0; k < endPosition - startPosition; k++) {
-                    expression.remove(startPosition + 1);
-                }
-            } else {
-                expression.addAll(positionIndex - 1, result);
-
-                for (int j = 0; j < 3; j++) {
-                    expression.remove(positionIndex);
-                }
+            //Удаляем больше ненужное "обращение"
+            for (int k = 0; k < endPosition - startPosition; k++) {
+                expression.remove(startPosition + 1);
             }
 
             return positionIndex + result.size();
