@@ -32,9 +32,9 @@ public class GatewayCalcServerApplication {
 		return builder.routes()
 				.route("functionRepositoryService",r->r.path("/СRepo/**")
 						.uri("http://localhost:8090/"))
-				.route("calculatorFuncService",r->r.path("/test/**")
+				.route("calculatorFuncService",r->r.path("/list/**")
 						.uri("http://localhost:8080/"))
-				.route("calculatorRangeTableService",r->r.path("/tTable/**")
+				.route("calculatorRangeTableService",r->r.path("/RTable/**")
 						.uri("http://localhost:8080/")).build();
 	}
 

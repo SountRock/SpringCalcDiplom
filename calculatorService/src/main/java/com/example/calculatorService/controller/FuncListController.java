@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("test")
-public class FuncTestController {
+@RequestMapping("list")
+public class FuncListController {
     @Autowired
     private FuncVarService service;
     @Autowired
@@ -94,5 +94,10 @@ public class FuncTestController {
         }
 
         return new ResponseEntity<>("Successful receipt", HttpStatus.OK);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity deleteById(Long id){
+        return service.deleteById(id);
     }
 }

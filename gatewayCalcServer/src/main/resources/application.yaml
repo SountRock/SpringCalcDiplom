@@ -15,8 +15,8 @@ cloud:
       - id: calculatorFuncService
         uri: http://localhost:8080/
         predicates:
-          - Path=/test/**
+          - Path=/list/**
       - id: calculatorRangeTableService
         uri: http://localhost:8080/
         predicates:
-          - Path=/tTable/**
+          - Path=/RTable/**

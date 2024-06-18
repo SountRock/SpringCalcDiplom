@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-@AllArgsConstructor
 public class FuncVarService implements ReferenceService {
     @Autowired
     private FuncVarRepository funcRepo;
@@ -58,14 +57,6 @@ public class FuncVarService implements ReferenceService {
      */
     public void clearHistory(){
         funcRepo.deleteAll();
-    }
-
-    /**
-     * Удалить записть из истории
-     * @param id
-     */
-    public void deleteFunction(Long id){
-        funcRepo.deleteFuncVar(id);
     }
 
     /**
@@ -136,6 +127,39 @@ public class FuncVarService implements ReferenceService {
      */
     public FuncVar findById(Long id){
         return funcRepo.findById(id).get();
+    }
+
+    /**
+     * Удалить функцию по id
+     * @param id
+     * @return
+     */
+    public ResponseEntity deleteById(long id){
+        try {
+            funcRepo.deleteFuncVar(id);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Удалить функции по имени
+     * @param name
+     * @return
+     */
+    public ResponseEntity deleteByName(String name){
+        try {
+            List<FuncVar> funcs = funcRepo.findByName(name);
+            for (FuncVar f : funcs) {
+                funcRepo.deleteById(f.getId());
+            }
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
 }

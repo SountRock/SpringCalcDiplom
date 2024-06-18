@@ -2,10 +2,13 @@ package com.example.calculatorService.service;
 
 import com.example.calculatorService.domain.customFunc.CustomFunction;
 import com.example.calculatorService.domain.funcvar.FuncVar;
+import com.example.calculatorService.domain.table.funcTable.FuncTable;
+import com.example.calculatorService.domain.table.funcTable.FuncTableCell;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
 import com.example.calculatorService.repository.CustomFunctionRepository;
+import com.example.calculatorService.repository.FuncTableRepository;
 import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.repository.RangeTableRepository;
 import com.example.calculatorService.service.MathModels.ModelCustomRightSide;
@@ -371,5 +374,155 @@ public interface ReferenceService {
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Найти ссылки на другие функции.
+     * Синтаксис1: ref(имя_записи, номер_ячейки);
+     * Синтаксис2.1: ref(имя_записи, с_номера..по_номер);
+     * Синтаксис2.2: ref(имя_записи, с_номера..по_номер, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (2.1);
+     * @param expression
+     * @return
+     */
+    default List<String> findFuncTableReferencesById(List<String> expression, FuncTableRepository tfRepo) throws NoSuchElementException, ReferenceResultIsEmpty{
+        if(expression == null){
+            return null;
+        }
+        //вставка результата другого выражения по count
+        for (int i = 0; i < expression.size(); i++) {
+            if(expression.get(i).equals("ref")){
+                try {
+                    String recordName = expression.get(i + 2).replaceAll(" ", "");
+                    FuncTable record = tfRepo.findByRecordName(recordName).get(0);
+                    List<FuncTableCell> cells = record.getCells();
+
+                    String counts = expression.get(i + 4).replaceAll(" ", "");
+                    //Когда мы хотим получить несколько результатов по count и какт-о их объединить
+                    if(counts.indexOf("..") > 0) {
+                        //Операция объединения результатов выражений по умолчанию сложение
+                        String operationBetweenResultsById = "+";
+                        byte sizeLabelRef = 6; //Размер самой ссылки в выражении, для того, чтобы мы могли ее стереть после вставки значения по ней
+                        //Ищем указана ли операция объединения результатов выражений
+                        if(expression.get(i + 5).equals(",")){
+                            operationBetweenResultsById = expression.get(i + 6);
+                            sizeLabelRef = 8;
+                        }
+
+                        //Теперь разделяем диапазон иднексов
+                        String[] countsArr = counts.split("\\.\\.");
+                        try {
+                            long start = Long.parseLong(countsArr[0]);
+                            long end = Long.parseLong(countsArr[1]);
+                            List<String> result = new ArrayList<>();
+                            for (FuncTableCell cell : cells) {
+                                for (long j = start; j < end + 1; j++) {
+                                    if(cell.getCellCount() == j){
+                                        result.add("(");
+                                        result.addAll(cell.getResult());
+                                        result.add(")");
+                                        result.add(operationBetweenResultsById);
+                                    }
+                                }
+                            }
+
+                            result.remove(result.size() - 1);
+                            expression.addAll(i, result);
+                            for (byte j = 0; j < sizeLabelRef; j++) {
+                                expression.remove(i + result.size());
+                            }
+                            i += result.size();
+                        } catch (ArrayIndexOutOfBoundsException e){
+                            e.printStackTrace();
+                        }
+                    } else {
+                        long countCell = Long.parseLong(counts);
+                        List<String> resultByCount = null;
+                        for (int j = 0; j < cells.size(); j++) {
+                            if(cells.get(j).getCellCount() == countCell){
+                                resultByCount = cells.get(j).getResult();
+                                j = cells.size();
+                            }
+                        }
+                        if(resultByCount != null){
+                            expression.addAll(i, resultByCount);
+                            for (byte j = 0; j < 6; j++) {
+                                expression.remove(i + resultByCount.size());
+                            }
+
+                            i += resultByCount.size();
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+
+                    return null;
+                } catch (NullPointerException e){
+                    throw new ReferenceResultIsEmpty();
+                }
+            }
+        }
+
+        return expression;
+    }
+
+    /**
+     * Найти ссылки на другие функции по имени.
+     * Синтаксис1: name(имя_записи, имя_ячеек). Если только одна переменная имеет такое имя, то вернется ее значение.
+     * Если несколько то вернеться их объединение.
+     * Синтаксис2: name(имя_записи, имя_ячеек, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (1);
+     * @param expression
+     * @return
+     */
+    default List<String> findFuncTableReferencesByName(List<String> expression, FuncTableRepository tfRepo) throws NoSuchElementException, ReferenceResultIsEmpty {
+        if (expression == null) {
+            return null;
+        }
+        //вставка результата другого выражения по cellName
+        for (int i = 0; i < expression.size(); i++) {
+            if (expression.get(i).equals("name")) {
+                try {
+                    String recordName = expression.get(i + 2).replaceAll(" ", "");
+                    FuncTable record = tfRepo.findByRecordName(recordName).get(0);
+                    List<FuncTableCell> cells = record.getCells();
+
+                    //Операция объединения результатов выражений по умолчанию сложение
+                    String operationBetweenResultsById = "+";
+                    byte sizeLabelRef = 6; //Размер самой ссылки в выражении, для того, чтобы мы могли ее стереть после вставки значения по ней
+                    //Ищем указана ли операция объединения результатов выражений
+                    if(expression.get(i + 5).equals(",")){
+                        operationBetweenResultsById = expression.get(i + 6);
+                        sizeLabelRef = 8;
+                    }
+
+                    String cellName = expression.get(i + 4).replaceAll(" ", "");
+                    List<String> result = new ArrayList<>();
+                    for (FuncTableCell cell : cells) {
+                        if(cell.getCellName().equals(cellName)){
+                            result.add("(");
+                            result.addAll(cell.getResult());
+                            result.add(")");
+                            result.add(operationBetweenResultsById);
+                        }
+                    }
+                    result.remove(result.size() - 1);
+
+                    expression.addAll(i, result);
+                    for (byte j = 0; j < sizeLabelRef; j++) {
+                        expression.remove(i + result.size());
+                    }
+
+                    i += result.size();
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+
+                    return null;
+                } catch (NullPointerException e) {
+                    throw new ReferenceResultIsEmpty();
+                }
+            }
+        }
+
+        return expression;
     }
 }

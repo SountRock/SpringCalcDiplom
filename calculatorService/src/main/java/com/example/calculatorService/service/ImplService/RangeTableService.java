@@ -1,5 +1,6 @@
 package com.example.calculatorService.service.ImplService;
 
+import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.domain.table.rangeTable.Param;
 import com.example.calculatorService.domain.table.rangeTable.Range;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
@@ -85,15 +86,38 @@ public class RangeTableService implements ReferenceService {
     }
 
     /**
-     * Удалить таблицу
+     * Удалить таблицу по id
      * @param id
+     * @return
      */
-    public void deleteFunction(Long id){
-        tableRepo.deleteTable(id);
+    public ResponseEntity deleteById(long id){
+        try {
+            tableRepo.deleteTable(id);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     /**
-     * Расчитать функцию
+     * Удалить таблицу по имени
+     * @param name
+     * @return
+     */
+    public ResponseEntity deleteByName(String name){
+        try {
+            RangeTable table = tableRepo.findByName(name).get(0);
+            tableRepo.deleteTable(table.getId());
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException | IndexOutOfBoundsException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Расчитать таблицу
      */
     public ResponseEntity<String> calculateTable(RangeTable table, List<Range> ranges){
         try {
@@ -225,7 +249,7 @@ public class RangeTableService implements ReferenceService {
     }
 
     /**
-     * Расчитать функцию
+     * Расчитать таблицу равномерно для всех диапазонов
      */
     public ResponseEntity<String> calculateTable(RangeTable table, List<Range> ranges, int maxCountIteration) {
         try {

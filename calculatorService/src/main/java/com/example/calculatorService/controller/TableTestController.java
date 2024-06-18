@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("tTable")
+@RequestMapping("RTable")
 public class TableTestController {
     @Autowired
     private RangeTableService service;
