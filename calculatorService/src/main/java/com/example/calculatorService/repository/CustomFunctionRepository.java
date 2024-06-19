@@ -9,13 +9,5 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CustomFunctionRepository extends JpaRepository<CustomFunction, Long> {
-    /**
-     * Такой метод удаления был выбраз в связи с возниковвением частой ошибки "row was updated or deleted by another transaction"
-     * @param id
-     */
-    @Modifying
-    @Query("DELETE FROM CustomFunction c WHERE c.id=:id")
-    void deleteCustomFunction(Long id);
-
     List<CustomFunction> findByName(String name);
 }

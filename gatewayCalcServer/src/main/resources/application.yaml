@@ -20,3 +20,7 @@ cloud:
         uri: http://localhost:8080/
         predicates:
           - Path=/RTable/**
+      - id: calculatorFuncTableService
+        uri: http://localhost:8080/
+        predicates:
+          - Path=/FTable/**

@@ -23,4 +23,9 @@ public class FuncTableCell {
     private String expression;
     @Column(name="`result`")
     private List<String> result;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "funcTable_id")
+    @JsonIgnore
+    private FuncTable funcTable;
 }

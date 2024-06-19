@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("RTable")
-public class TableTestController {
+public class RangeTableController {
     @Autowired
     private RangeTableService service;
 
@@ -23,6 +23,16 @@ public class TableTestController {
     public ResponseEntity addFunc(@RequestBody RangeTable table){
         service.addTable(table);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("deleteById/{id}")
+    public ResponseEntity deleteById(@PathVariable("id") Long id){
+        return service.deleteById(id);
+    }
+
+    @DeleteMapping("deleteByName/{name}")
+    public ResponseEntity deleteById(@PathVariable("name") String name){
+        return service.deleteByName(name);
     }
 
     @GetMapping("tables")

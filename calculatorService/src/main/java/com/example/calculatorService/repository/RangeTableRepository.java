@@ -15,7 +15,7 @@ public interface RangeTableRepository extends JpaRepository<RangeTable, Long> {
      * @param id
      */
     @Modifying
-    @Query("DELETE FROM RangeTable t WHERE t.id=:id")
+    @Query("DELETE FROM RangeTable rt WHERE rt.id=:id")
     void deleteTable(Long id);
 
     List<RangeTable> findByName(String name);

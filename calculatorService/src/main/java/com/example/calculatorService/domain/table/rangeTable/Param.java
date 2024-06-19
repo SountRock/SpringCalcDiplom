@@ -26,8 +26,8 @@ public class Param {
     public Param() {
     }
 
-    @ManyToOne
-    @JoinColumn(name = "resultWithParams_id")
-    @JsonIgnore
-    private ResultWithParams result;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "resultWithParams_id")
+    //@JsonIgnore
+    //private ResultWithParams result;
 }

@@ -1,5 +1,6 @@
 package com.example.calculatorService.domain.customFunc;
 
+import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -29,11 +30,4 @@ public class CustomFunctionVar {
     @Column(name="`type`")
     @Enumerated
     private TypeVar type;
-
-    /*
-    @ManyToOne
-    @JoinColumn(name = "customFunction_id")
-    @JsonIgnore
-    private CustomFunction customFunction;
-     */
 }

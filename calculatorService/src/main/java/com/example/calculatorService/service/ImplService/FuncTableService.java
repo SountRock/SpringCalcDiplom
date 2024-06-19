@@ -12,6 +12,7 @@ import com.example.calculatorService.repository.RangeTableRepository;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Transactional
 public class FuncTableService implements ReferenceService {
     @Autowired
     private FuncTableRepository ftRepo;

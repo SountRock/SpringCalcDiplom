@@ -13,6 +13,7 @@ import com.example.calculatorService.repository.RangeTableRepository;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Transactional
 public class RangeTableService implements ReferenceService {
     @Autowired
     private RangeTableRepository tableRepo;
@@ -156,10 +158,6 @@ public class RangeTableService implements ReferenceService {
                                 .replaceAll("\\]", "")
                                 .replaceAll(",", "") +
                                 ",\n";
-                        r.setRangeTable(table);
-                    }
-                    for (Range r : ranges) {
-                        r.setRangeTable(table);
                     }
 
                     table.setRanges(ranges);
@@ -288,10 +286,6 @@ public class RangeTableService implements ReferenceService {
                                         .replaceAll("\\]", "")
                                         .replaceAll(",", "") +
                                 ",\n";
-                        r.setRangeTable(table);
-                    }
-                    for (Range r : ranges) {
-                        r.setRangeTable(table);
                     }
 
                     table.setRanges(ranges);

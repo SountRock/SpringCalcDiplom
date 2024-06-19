@@ -16,16 +16,17 @@ public class ResultWithParams {
     private Long id;
 
     @Column(name="`params`")
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Param> params;
 
     @Column(name="`result`")
     private List<String> result;
 
-    @ManyToOne
-    @JoinColumn(name = "rangeTable_id")
-    @JsonIgnore
-    private RangeTable rangeTable;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "rangeTable_id")
+    //@JsonIgnore
+    //private RangeTable rangeTable;
 
     public ResultWithParams(List<Param> params, List<String> result) {
         this.params = params;

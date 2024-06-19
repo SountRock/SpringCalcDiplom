@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class CustomFuncRepositoryConnectServer {
             }
 
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e){
+        } catch (ResourceAccessException e){
             e.printStackTrace();
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -55,7 +56,7 @@ public class CustomFuncRepositoryConnectServer {
             }
 
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e){
+        } catch (ResourceAccessException e){
             e.printStackTrace();
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

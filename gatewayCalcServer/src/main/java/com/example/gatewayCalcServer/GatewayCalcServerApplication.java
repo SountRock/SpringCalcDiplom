@@ -35,7 +35,10 @@ public class GatewayCalcServerApplication {
 				.route("calculatorFuncService",r->r.path("/list/**")
 						.uri("http://localhost:8080/"))
 				.route("calculatorRangeTableService",r->r.path("/RTable/**")
-						.uri("http://localhost:8080/")).build();
+						.uri("http://localhost:8080/"))
+				.route("calculatorFuncTableService",r->r.path("/FTable/**")
+						.uri("http://localhost:8080/"))
+				.build();
 	}
 
 }

@@ -20,7 +20,6 @@ public class CustomFunction {
     private int countInputVars;
     @Column(name="`steps`")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "customFunction_id")
     private List<CustomFunctionVar> steps;
 
     @Column(name="`repeatCount`")

@@ -1,5 +1,6 @@
 package com.example.calculatorService.domain.table.rangeTable;
 
+import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,8 +23,8 @@ public class Range {
     @Column(name="`step`")
     private double step;
 
-    @ManyToOne
-    @JoinColumn(name = "rangeTable_id")
-    @JsonIgnore
-    private RangeTable rangeTable;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "rangeTable_id")
+    //@JsonIgnore
+    //private RangeTable rangeTable;
 }

@@ -19,8 +19,6 @@ import java.util.List;
 public class FuncTableController {
     @Autowired
     private FuncTableService service;
-    @Autowired
-    private CustomFuncRepositoryConnectServer connect;
 
     @PostMapping("add/{recordName}")
     public ResponseEntity addFunc(@PathVariable("recordName") String recordName){
@@ -45,14 +43,32 @@ public class FuncTableController {
     }
 
     @DeleteMapping("deleteRecord/{id}")
-    public ResponseEntity deleteById(Long id){
+    public ResponseEntity deleteById(@PathVariable("id") Long id){
          return service.deleteRecordById(id);
     }
 
     @DeleteMapping("deleteRecordByName/{name}")
-    public ResponseEntity deleteByName(String name){
+    public ResponseEntity deleteByName(@PathVariable("name") String name){
         return service.deleteRecordByName(name);
     }
 
+    @DeleteMapping("deleteCellById/{recordId}/{cellId}")
+    public ResponseEntity deleteCell(@PathVariable("recordId") long recordId, @PathVariable("cellId") long cellId){
+        return service.deleteCellInRecord(recordId, cellId);
+    }
 
+    @DeleteMapping("deleteCellsByName/{recordId}/{cellName}")
+    public ResponseEntity deleteCells(@PathVariable("recordId") long recordId, @PathVariable("cellName") String cellName){
+        return service.deleteCellInRecord(recordId, cellName);
+    }
+
+    @DeleteMapping("deleteCellByIdWithRecordName/{recordName}/{cellId}")
+    public ResponseEntity deleteCell(@PathVariable("recordName") String recordName, @PathVariable("cellId") long cellId){
+        return service.deleteCellInRecord(recordName, cellId);
+    }
+
+    @DeleteMapping("deleteCellsByNameWithRecordName/{recordName}/{cellName}")
+    public ResponseEntity deleteCell(@PathVariable("recordName") String recordName, @PathVariable("recordName") String cellName){
+        return service.deleteCellInRecord(recordName, cellName);
+    }
 }

@@ -9,6 +9,7 @@ import com.example.functionRepositoryService.service.ReferenceService;
 import com.example.functionRepositoryService.service.Tools.AnaliseExpression;
 import com.example.functionRepositoryService.service.Tools.PrepareExpression;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class CustomFuncService implements ReferenceService {
     @Autowired
     private CustomFunctionRepository customRepo;
@@ -175,5 +177,36 @@ public class CustomFuncService implements ReferenceService {
 
     public ResponseEntity<CustomFunction> getLast(){
         return new ResponseEntity<>(customRepo.findById(lastAddedFuncId).get(), HttpStatus.OK);
+    }
+
+    /**
+     * Удалить функцию по id
+     * @param id
+     * @return
+     */
+    public ResponseEntity deleteById(long id){
+        try {
+            customRepo.deleteCustomFunction(id);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Удалить функцию по имени
+     * @param name
+     * @return
+     */
+    public ResponseEntity deleteByName(String name){
+        try {
+            CustomFunction func = customRepo.findByName(name).get(0);
+            customRepo.deleteCustomFunction(func.getId());
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException | IndexOutOfBoundsException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 }

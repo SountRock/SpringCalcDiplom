@@ -18,8 +18,6 @@ import java.util.List;
 public class FuncListController {
     @Autowired
     private FuncVarService service;
-    @Autowired
-    private CustomFuncRepositoryConnectServer connect;
 
     @PostMapping("add")
     public ResponseEntity addFunc(@RequestBody FuncVar funcVar){
@@ -82,22 +80,8 @@ public class FuncListController {
         return new ResponseEntity<>(service.getFuncByName(name), HttpStatus.OK);
     }
 
-    @PostMapping("/message")
-    public ResponseEntity postMessage(@RequestBody String message){
-        if(message.equals("ADD_NEW_C_FUNC")){
-            ResponseEntity response = connect.loadLastFunc();
-            if(response.getStatusCode() == HttpStatus.OK){
-                return new ResponseEntity<>("Successful added", HttpStatus.ACCEPTED);
-            } else {
-                return new ResponseEntity<>("Failed added", HttpStatus.CONFLICT);
-            }
-        }
-
-        return new ResponseEntity<>("Successful receipt", HttpStatus.OK);
-    }
-
     @DeleteMapping("delete/{id}")
-    public ResponseEntity deleteById(Long id){
+    public ResponseEntity deleteById(@PathVariable("id") Long id){
         return service.deleteById(id);
     }
 }

@@ -56,4 +56,14 @@ public class CreateCustomFunctionController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
+
+    @DeleteMapping("deleteById/{id}")
+    public ResponseEntity deleteById(@PathVariable("id") Long id){
+        return service.deleteById(id);
+    }
+
+    @DeleteMapping("deleteByName/{name}")
+    public ResponseEntity deleteById(@PathVariable("name") String name){
+        return service.deleteByName(name);
+    }
 }

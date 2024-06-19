@@ -21,5 +21,4 @@ public class CalculatorServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CalculatorServiceApplication.class, args);
 	}
-
 }

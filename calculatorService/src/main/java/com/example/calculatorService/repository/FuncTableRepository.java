@@ -2,6 +2,7 @@ package com.example.calculatorService.repository;
 
 import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.domain.table.funcTable.FuncTable;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ public interface FuncTableRepository extends JpaRepository<FuncTable, Long> {
      * @param id
      */
     @Modifying
-    @Query("DELETE FROM FuncTable f WHERE f.id=:id")
+    @Query("DELETE FROM FuncTable ft WHERE ft.id=:id")
     void deleteFuncTable(Long id);
 
     List<FuncTable> findByRecordName(String recordName);

@@ -20,6 +20,5 @@ public class FuncTable {
 
     @Column(name="`cells`")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "funcTable_id")
     private List<FuncTableCell> cells;
 }

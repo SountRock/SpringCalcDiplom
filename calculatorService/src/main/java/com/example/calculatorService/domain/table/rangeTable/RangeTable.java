@@ -29,11 +29,13 @@ public class RangeTable {
     private String expression;
 
     @Column(name="`ranges`")
-    @OneToMany(mappedBy = "rangeTable", cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "rangeTable", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Range> ranges;
 
     @Column(name="`results`")
-    @OneToMany(mappedBy = "rangeTable", cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "rangeTable", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResultWithParams> results;
     ////////////////////////////////////////////////////////////////////
 
