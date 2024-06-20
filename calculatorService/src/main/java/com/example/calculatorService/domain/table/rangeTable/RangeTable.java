@@ -1,12 +1,14 @@
 package com.example.calculatorService.domain.table.rangeTable;
 
-import com.example.calculatorService.domain.table.rangeTable.Range;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -22,6 +24,8 @@ public class RangeTable {
     private String name;
 
     @Column(name="`createDate`")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createDate;
     ////////////////////////////////////////////////////////////////////
     @Nonnull

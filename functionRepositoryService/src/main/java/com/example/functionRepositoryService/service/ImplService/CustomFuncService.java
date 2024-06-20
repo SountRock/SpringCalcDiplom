@@ -8,6 +8,7 @@ import com.example.functionRepositoryService.repository.CustomFunctionRepository
 import com.example.functionRepositoryService.service.ReferenceService;
 import com.example.functionRepositoryService.service.Tools.AnaliseExpression;
 import com.example.functionRepositoryService.service.Tools.PrepareExpression;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +55,7 @@ public class CustomFuncService implements ReferenceService {
      * @param steps
      * @return
      */
-    public ResponseEntity<String> createCustomFunc(String head, String steps) {
+    public ResponseEntity<String> createCustomFunc(String head, String steps, String description) {
         CustomFunction newFunc = new CustomFunction();
         List<CustomFunctionVar> vars = new ArrayList<>();
 
@@ -133,6 +138,7 @@ public class CustomFuncService implements ReferenceService {
         }
 
         newFunc.setSteps(vars);
+        newFunc.setDescription(description);
 
         try {
             customRepo.save(newFunc);
@@ -208,5 +214,69 @@ public class CustomFuncService implements ReferenceService {
         } catch (IllegalArgumentException | IndexOutOfBoundsException e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+    }
+
+    /**
+     * Сохранить функции
+     * @param directory
+     * @param entities
+     * @return
+     */
+    public boolean saveDocument(String directory, String fileName, List<CustomFunction> entities) {
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new File(directory);
+        file.mkdirs();
+        try {
+            file = new File(directory,
+                    fileName + ".CustomFunction.json");
+
+            mapper.writeValue(file, entities);
+
+            return true;
+        } catch (IOException | IndexOutOfBoundsException e){
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+    /**
+     * Загрузить функции из файла
+     * @param directory
+     * @param file
+     * @return
+     */
+    public List<CustomFunction> loadDocument(String directory, String file) {
+        File loadFile = new File(directory, file);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(loadFile));
+            String json = reader.readLine();
+
+            return List.of(mapper.readValue(json, CustomFunction[].class));
+        } catch (IOException e){
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
+    /**
+     * Получить имена файлов в директории
+     * @param directory
+     * @return
+     */
+    public List<String> showFiles(String directory){
+        File dir = new File(directory);
+        List<String> list = new ArrayList<>();
+        for (File file : dir.listFiles() ){
+            list.add(file.getName());
+        }
+
+        return list;
+    }
+
+    public void loadFuncs(List<CustomFunction> funcs){
+        customRepo.saveAll(funcs);
     }
 }

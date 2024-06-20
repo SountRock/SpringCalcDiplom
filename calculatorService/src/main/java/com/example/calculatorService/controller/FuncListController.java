@@ -1,21 +1,30 @@
 package com.example.calculatorService.controller;
 
 import com.example.calculatorService.domain.funcvar.FuncVar;
-import com.example.calculatorService.service.CustomFuncRepositoryConnectServer;
 import com.example.calculatorService.service.ImplService.FuncVarService;
+import com.example.calculatorService.service.SaveDocument;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("list")
-public class FuncListController {
+public class FuncListController implements SaveDocument<FuncVar> {
     @Autowired
     private FuncVarService service;
 
@@ -71,8 +80,8 @@ public class FuncListController {
     }
 
     @GetMapping("history")
-    public ResponseEntity<List<FuncVar>> getHistory(){
-        return new ResponseEntity<>(service.getHistory(), HttpStatus.OK);
+    public ResponseEntity getHistory(){
+        return service.getHistory();
     }
 
     @GetMapping("findByName/{name}")
@@ -83,5 +92,42 @@ public class FuncListController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity deleteById(@PathVariable("id") Long id){
         return service.deleteById(id);
+    }
+
+    @DeleteMapping("deleteByName/{name}")
+    public ResponseEntity deleteByName(@PathVariable("name") String name){
+        return service.deleteByName(name);
+    }
+
+    @PostMapping("saveList/{directory}/{fileName}")
+    public ResponseEntity saveList(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName) {
+        try {
+            boolean isSave = saveDocument("calculatorService/" + directory, fileName, service.getHistory().getBody());
+            if (isSave) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("loadList/{directory}/{fileName}")
+    public ResponseEntity loadList(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
+        List<FuncVar> loadList = service.loadDocument("calculatorService/" + directory, fileName);
+
+        if(loadList != null){
+            service.loadFuncs(loadList);
+            return new ResponseEntity<>(loadList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("showFiles/{directory}")
+    public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
+        List<String> files = showFiles("calculatorService/" + directory);
+        return new ResponseEntity<>(files, HttpStatus.OK);
     }
 }

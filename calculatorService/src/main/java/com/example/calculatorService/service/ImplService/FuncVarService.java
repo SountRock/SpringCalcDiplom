@@ -1,23 +1,27 @@
 package com.example.calculatorService.service.ImplService;
 
 import com.example.calculatorService.domain.funcvar.FuncVar;
+import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
 import com.example.calculatorService.repository.CustomFunctionRepository;
 import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.repository.RangeTableRepository;
-import com.example.calculatorService.service.CustomFuncRepositoryConnectServer;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -118,8 +122,8 @@ public class FuncVarService implements ReferenceService {
     /**
      * Получить историю вычислений
      */
-    public List<FuncVar> getHistory() {
-        return funcRepo.findAll();
+    public  ResponseEntity<List<FuncVar>> getHistory() {
+        return new ResponseEntity<>(funcRepo.findAll(), HttpStatus.OK);
     }
 
     /**
@@ -164,4 +168,28 @@ public class FuncVarService implements ReferenceService {
         }
     }
 
+    public void loadFuncs(List<FuncVar> funcVars){
+        funcRepo.saveAll(funcVars);
+    }
+
+    /**
+     * Загрузить Лист из файла
+     * @param directory
+     * @param file
+     * @return
+     */
+    public List<FuncVar> loadDocument(String directory, String file) {
+        File loadFile = new File(directory, file);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(loadFile));
+            String json = reader.readLine();
+
+            return List.of(mapper.readValue(json, FuncVar[].class));
+        } catch (IOException e){
+            e.printStackTrace();
+
+            return null;
+        }
+    }
 }

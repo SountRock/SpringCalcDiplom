@@ -3,6 +3,7 @@ package com.example.calculatorService.service.ImplService;
 import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.example.calculatorService.domain.table.funcTable.FuncTableCell;
+import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
 import com.example.calculatorService.repository.CustomFunctionRepository;
@@ -12,6 +13,7 @@ import com.example.calculatorService.repository.RangeTableRepository;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -22,6 +24,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -281,6 +287,31 @@ public class FuncTableService implements ReferenceService {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    public void loadTables(List<FuncTable> tables){
+        ftRepo.saveAll(tables);
+    }
+
+    /**
+     * Загрузить Таблицу из файла
+     * @param directory
+     * @param file
+     * @return
+     */
+    public List<FuncTable> loadDocument(String directory, String file) {
+        File loadFile = new File(directory, file);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(loadFile));
+            String json = reader.readLine();
+
+            return List.of(mapper.readValue(json, FuncTable[].class));
+        } catch (IOException e){
+            e.printStackTrace();
+
+            return null;
         }
     }
 }

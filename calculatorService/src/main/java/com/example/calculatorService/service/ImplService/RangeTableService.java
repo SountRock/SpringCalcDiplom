@@ -1,6 +1,7 @@
 package com.example.calculatorService.service.ImplService;
 
 import com.example.calculatorService.domain.funcvar.FuncVar;
+import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.example.calculatorService.domain.table.rangeTable.Param;
 import com.example.calculatorService.domain.table.rangeTable.Range;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
@@ -13,6 +14,7 @@ import com.example.calculatorService.repository.RangeTableRepository;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -20,7 +22,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.UnexpectedRollbackException;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -373,5 +380,30 @@ public class RangeTableService implements ReferenceService {
         }
 
         return null;
+    }
+
+    public void loadTables(List<RangeTable> tables){
+        tableRepo.saveAll(tables);
+    }
+
+    /**
+     * Загрузить Таблицу из файла
+     * @param directory
+     * @param file
+     * @return
+     */
+    public List<RangeTable> loadDocument(String directory, String file) {
+        File loadFile = new File(directory, file);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(loadFile));
+            String json = reader.readLine();
+
+            return List.of(mapper.readValue(json, RangeTable[].class));
+        } catch (IOException e){
+            e.printStackTrace();
+
+            return null;
+        }
     }
 }

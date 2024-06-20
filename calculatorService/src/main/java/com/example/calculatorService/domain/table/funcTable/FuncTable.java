@@ -1,6 +1,5 @@
 package com.example.calculatorService.domain.table.funcTable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 

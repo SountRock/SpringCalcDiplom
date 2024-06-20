@@ -26,9 +26,9 @@ public class CreateCustomFunctionController {
      * @param steps
      * @return
      */
-    @PostMapping("/create/{head}/{steps}")
-    public ResponseEntity addCustomFunc(@PathVariable("head") String head, @PathVariable("steps") String steps){
-        return service.createCustomFunc(head, steps);
+    @PostMapping("/create/{head}/{steps}/{description}")
+    public ResponseEntity addCustomFunc(@PathVariable("head") String head, @PathVariable("steps") String steps, @PathVariable("description") String description){
+        return service.createCustomFunc(head, steps, description);
     }
 
     /**
@@ -65,5 +65,37 @@ public class CreateCustomFunctionController {
     @DeleteMapping("deleteByName/{name}")
     public ResponseEntity deleteById(@PathVariable("name") String name){
         return service.deleteByName(name);
+    }
+
+    @PostMapping("saveLib/{directory}/{fileName}")
+    public ResponseEntity saveList(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName) {
+        try {
+            boolean isSave = service.saveDocument("functionRepositoryService/" + directory, fileName, service.findAll().getBody());
+            if (isSave) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("loadLib/{directory}/{fileName}")
+    public ResponseEntity loadTable(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
+        List<CustomFunction> loadList = service.loadDocument("functionRepositoryService/" + directory, fileName);
+
+        if(loadList != null){
+            service.loadFuncs(loadList);
+            return new ResponseEntity<>(loadList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("showFiles/{directory}")
+    public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
+        List<String> files = service.showFiles("functionRepositoryService/" + directory);
+        return new ResponseEntity<>(files, HttpStatus.OK);
     }
 }
