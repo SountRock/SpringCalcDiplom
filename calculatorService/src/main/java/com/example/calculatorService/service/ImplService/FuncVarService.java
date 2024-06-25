@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -87,15 +88,15 @@ public class FuncVarService implements ReferenceService {
                 if(prepareExpression != null){
                     List<String> result = analiser.analise(prepareExpression);
                     function.setResult(result);
+                    String resultString = result.toString()
+                            .replaceAll("\\[", "")
+                            .replaceAll("\\]", "")
+                            .replaceAll(",", "");
+                    function.setResultString(resultString);
 
                     funcRepo.save(function);
 
-                    return new ResponseEntity<>(
-                            result.toString()
-                                    .replaceAll("\\[", "")
-                                    .replaceAll("\\]", "")
-                                    .replaceAll(",", "")
-                    , HttpStatus.OK);
+                    return new ResponseEntity<>(resultString, HttpStatus.OK);
                 }
             }
 
@@ -191,5 +192,9 @@ public class FuncVarService implements ReferenceService {
 
             return null;
         }
+    }
+
+    public FuncVarRepository getFuncRepo(){
+        return funcRepo;
     }
 }

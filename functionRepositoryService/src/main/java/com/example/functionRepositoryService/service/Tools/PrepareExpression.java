@@ -37,7 +37,9 @@ public class PrepareExpression {
             } else if(isLetter(temp[i])){
                 String compare = "";
                 int j = i;
-                for (; j < temp.length && isLetter(temp[j]); j++) {
+                compare += temp[i];
+                j++;
+                for (; j < temp.length && isLetter(temp[j]) || temp[j - 1] == '_'; j++) {
                     compare += temp[j];
                 }
                 result.add(compare);
@@ -56,7 +58,7 @@ public class PrepareExpression {
      * @return is letter
      */
     private static boolean isLetter(char value){
-        return (value > 96 && value < 123);
+        return (value > 94 && value < 123);
     }
 
     /**

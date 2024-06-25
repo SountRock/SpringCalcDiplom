@@ -20,4 +20,9 @@ public class FuncTable {
     @Column(name="`cells`")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FuncTableCell> cells;
+
+    public void removeCell(FuncTableCell cell) {
+        cells.remove(cell);
+        cell.setFuncTable(null);
+    }
 }

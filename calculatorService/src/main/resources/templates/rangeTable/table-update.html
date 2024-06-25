@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link th:href="@{/style.css}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Update Table</title>
+</head>
+<body>
+<div class="separator"></div>
+<div class="redactTable">
+    <form action="#" th:action="@{/rangeTable/update-table}" th:object="${table}" method="post">
+        <div class="edit">
+            <label for="ID">ID: </label>
+            <input readonly type="text" th:field="*{id}" id="ID" placeholder="Table ID">
+        </div>
+        <div class="edit">
+            <label for="name">Name: </label>
+            <input type="text" th:field="*{name}" id="name" placeholder="Table Name">
+        </div>
+        <div class="edit">
+            <label for="expression">Expression: </label>
+            <input type="text" th:field="*{expression}" id="expression" placeholder="Table Expression">
+        </div>
+        <div class="edit">
+            <label for="rangesFormula">Ranges: </label>
+            <input type="text" th:field="*{rangesFormula}" id="rangesFormula" placeholder="Table Ranges">
+        </div>
+        <input class="button" type="submit" value="Save">
+    </form>
+</div>
+</body>
+</html>

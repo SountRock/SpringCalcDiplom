@@ -22,15 +22,18 @@ public class ResultWithParams {
 
     @Column(name="`result`")
     private List<String> result;
+    @Column(name="`resultString`")
+    private String resultString;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "rangeTable_id")
-    //@JsonIgnore
-    //private RangeTable rangeTable;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rangeTable_id")
+    @JsonIgnore
+    private RangeTable rangeTable;
 
-    public ResultWithParams(List<Param> params, List<String> result) {
+    public ResultWithParams(List<Param> params, String resultString, List<String> result) {
         this.params = params;
         this.result = result;
+        this.resultString = resultString;
     }
 
     public ResultWithParams() {}

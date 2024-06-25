@@ -23,6 +23,8 @@ public class FuncTableCell {
     private String expression;
     @Column(name="`result`")
     private List<String> result;
+    @Column(name="`resultString`")
+    private String resultString;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "funcTable_id")

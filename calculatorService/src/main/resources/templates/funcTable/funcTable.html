@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link th:href="@{/style.css}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Func Table</title>
+</head>
+<body>
+<div th:each="record : ${records}">
+    <div class="recordNameView">
+        <label th:text="'NAME: ' + ${record.recordName}"></label>
+        <a th:href="@{delete-record(recordId=${record.id})}">Delete</a>
+    </div>
+    <div class="cells" th:each="cell : ${record.cells}">
+        <div class="cellView">
+            <div class="cellHead">
+                <label th:text="'Count: ' + ${cell.cellCount}"></label>
+                <label th:text="'Name: ' + ${cell.cellName}"></label>
+                <label th:text="'ID: ' + ${cell.id}"></label>
+            </div>
+            <div class="cellValue">
+                <label th:text="'Expression: ' + ${cell.expression}"></label>
+                <label th:text="'Value: ' + ${cell.resultString}"></label>
+                <div class="redactElemPanel">
+                    <a th:href="@{update-cell/{id}/{recordName}(id=${cell.id},recordName=${record.recordName})}">Update</a>
+                    <a th:href="@{delete-cell(idRecord=${record.id},idCell=${cell.id})}">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="separator"></div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{calculate-cell}" method="get">
+            <label>Calculate Cell</label>
+            <div class="edit">
+                <label>Record Name: </label>
+                <input type="text" name="recordName"/>
+            </div>
+            <div class="edit">
+                <label>Cell Name: </label>
+                <input type="text" name="cellName"/>
+            </div>
+            <div class="edit">
+                <label>Expression: </label>
+                <input type="text" name="value"/>
+            </div>
+            <button class="button" type="submit">Calculate</button>
+        </form>
+    </div>
+    <div class="redactView">
+        <form th:action="@{delete-cells-by-name}" method="get">
+            <label>Delete Cells In Record</label>
+            <div class="edit">
+                <label>Record Name: </label>
+                <input type="text" name="recordName"/>
+            </div>
+            <div class="edit">
+                <label>Cells Name: </label>
+                <input type="text" name="cellsName"/>
+            </div>
+            <button class="button" type="submit">Delete</button>
+        </form>
+    </div>
+</div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{clear}" method="get">
+            <button class="button" type="submit">Clear All</button>
+        </form>
+    </div>
+</div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{download}" method="get">
+            <label>Download Table: </label>
+            <div class="edit">
+                <label>File Name: </label>
+                <input type="text" name="fileName"/>
+            </div>
+            <button class="button" type="submit">Download</button>
+        </form>
+    </div>
+    <div class="redactView">
+        <form method="post" th:action="@{upload}" enctype="multipart/form-data">
+            <label th:text="'Upload Table: ' + ${message}" th:if="${message ne null}"></label>
+            <div class="edit">
+                <input type="file" name="file" class="button">
+            </div>
+            <button type="submit" class="button">Upload</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

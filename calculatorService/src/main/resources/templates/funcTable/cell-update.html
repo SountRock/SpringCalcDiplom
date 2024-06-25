@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link th:href="@{/style.css}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Update Cell</title>
+</head>
+<body>
+<div class="separator"></div>
+<div class="redactTable">
+    <form action="#" th:action="@{/funcTable/update-cell}" th:object="${cell}" method="post">
+        <div class="edit">
+            <label for="ID">ID: </label>
+            <input readonly type="text" th:field="*{id}" id="ID" placeholder="Cell ID">
+        </div>
+        <div class="edit">
+            <label for="cellCount">Count: </label>
+            <input readonly type="text" th:field="*{cellCount}" id="cellCount" placeholder="Cell Count">
+        </div>
+        <div class="edit">
+            <label for="cellName">Cell Name: </label>
+            <input type="text" th:field="*{cellName}" id="cellName" placeholder="Cell Name">
+        </div>
+        <div class="edit">
+            <label for="expression">Expression: </label>
+            <input type="text" th:field="*{expression}" id="expression" placeholder="Cell Expression">
+        </div>
+        <div class="edit">
+            <label>RecordName: </label>
+            <input type="text" th:value="${recordName}" name="recordName"/>
+        </div>
+        <input class="button" type="submit" value="Save">
+    </form>
+</div>
+</body>
+</html>

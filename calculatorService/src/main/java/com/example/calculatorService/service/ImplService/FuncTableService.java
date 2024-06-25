@@ -1,15 +1,10 @@
 package com.example.calculatorService.service.ImplService;
 
-import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.example.calculatorService.domain.table.funcTable.FuncTableCell;
-import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
-import com.example.calculatorService.repository.CustomFunctionRepository;
-import com.example.calculatorService.repository.FuncTableRepository;
-import com.example.calculatorService.repository.FuncVarRepository;
-import com.example.calculatorService.repository.RangeTableRepository;
+import com.example.calculatorService.repository.*;
 import com.example.calculatorService.service.ReferenceService;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
 import com.example.calculatorService.service.Tools.PrepareExpression;
@@ -18,11 +13,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 
@@ -39,6 +33,9 @@ import java.util.stream.Collectors;
 public class FuncTableService implements ReferenceService {
     @Autowired
     private FuncTableRepository ftRepo;
+    @Autowired
+    private FuncTableCellRepository ftcRepo;
+
     private RangeTableRepository tableRepo;
     private CustomFunctionRepository customRepo;
 
@@ -73,7 +70,6 @@ public class FuncTableService implements ReferenceService {
         try {
             FuncTable record = ftRepo.findByRecordName(recordName).get(0);
 
-
             FuncTableCell newCell = new FuncTableCell();
             newCell.setCellName(cellName);
             newCell.setExpression(value);
@@ -93,7 +89,56 @@ public class FuncTableService implements ReferenceService {
     }
 
     /**
-     * Расчитать функцию
+     * Расчитать ячейку
+     */
+    public ResponseEntity<String> calculateCell(FuncTableCell cell){
+        try {
+            if(cell != null){
+                List<String> prepareExpression = preparator.decompose(cell.getExpression());
+
+                //Проверям наличие ссылок с FuncTable
+                prepareExpression = findFuncTableReferencesById(prepareExpression, ftcRepo);
+                prepareExpression = findFuncTableReferencesByCount(prepareExpression, ftRepo);
+                prepareExpression = findFuncTableReferencesByName(prepareExpression, ftRepo);
+
+                //Проверям наличие ссылок с RangeTable
+                prepareExpression = findRangeTableReferencesById(prepareExpression, tableRepo);
+                prepareExpression = findRangeTableReferencesByName(prepareExpression, tableRepo);
+                prepareExpression = calculateRangeTableReferences(prepareExpression, tableRepo, customRepo, analiser);
+
+                //Проверям наличие ссылок на Custom Function
+                prepareExpression = findNCalculateCustomFunc(prepareExpression, customRepo, analiser);
+
+                if(prepareExpression != null){
+                    List<String> result = analiser.analise(prepareExpression);
+                    cell.setResult(result);
+                    String stringResult = result.toString()
+                            .replaceAll("\\[", "")
+                            .replaceAll("\\]", "")
+                            .replaceAll(",", "");
+                    cell.setResultString(stringResult);
+
+                    ftcRepo.save(cell);
+
+                    return new ResponseEntity<>(stringResult, HttpStatus.OK);
+                }
+            }
+
+            return new ResponseEntity<>("Cell is Null", HttpStatus.NOT_FOUND);
+        } catch (NoSuchElementException e){
+            e.printStackTrace();
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        } catch (ReferenceResultIsEmpty e){
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (TableReferenceErrorException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Расчитать выражение в ячейке
      */
     public ResponseEntity<String> calculateCellInRecord(String recordName, FuncTableCell cell){
         try {
@@ -109,7 +154,8 @@ public class FuncTableService implements ReferenceService {
                 List<String> prepareExpression = preparator.decompose(cell.getExpression());
 
                 //Проверям наличие ссылок с FuncTable
-                prepareExpression = findFuncTableReferencesById(prepareExpression, ftRepo);
+                prepareExpression = findFuncTableReferencesById(prepareExpression, ftcRepo);
+                prepareExpression = findFuncTableReferencesByCount(prepareExpression, ftRepo);
                 prepareExpression = findFuncTableReferencesByName(prepareExpression, ftRepo);
 
                 //Проверям наличие ссылок с RangeTable
@@ -123,6 +169,11 @@ public class FuncTableService implements ReferenceService {
                 if(prepareExpression != null){
                     List<String> result = analiser.analise(prepareExpression);
                     cell.setResult(result);
+                    String stringResult = result.toString()
+                            .replaceAll("\\[", "")
+                            .replaceAll("\\]", "")
+                            .replaceAll(",", "");
+                    cell.setResultString(stringResult);
 
                     List<FuncTableCell> cells = record.getCells();
                     if(cells != null){
@@ -136,13 +187,7 @@ public class FuncTableService implements ReferenceService {
 
                     record.setCells(cells);
                     ftRepo.save(record);
-
-                    return new ResponseEntity<>(
-                            result.toString()
-                                    .replaceAll("\\[", "")
-                                    .replaceAll("\\]", "")
-                                    .replaceAll(",", "")
-                            , HttpStatus.OK);
+                    return new ResponseEntity<>(stringResult, HttpStatus.OK);
                 }
             }
 
@@ -156,6 +201,22 @@ public class FuncTableService implements ReferenceService {
         } catch (TableReferenceErrorException e){
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<FuncTable> findRecordByName(String name){
+        try {
+            return new ResponseEntity<>(ftRepo.findByRecordName(name).get(0), HttpStatus.OK);
+        } catch (IndexOutOfBoundsException | NoSuchElementException e) {
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+    }
+
+    public ResponseEntity<FuncTableCell> findCellById(long id){
+        try {
+            return new ResponseEntity<>(ftcRepo.findById(id).get(), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(null, HttpStatus.OK);
         }
     }
 
@@ -204,14 +265,67 @@ public class FuncTableService implements ReferenceService {
      * @param idCell
      * @return
      */
-    public ResponseEntity deleteCellInRecord(long idRecord, long idCell){
+    public ResponseEntity deleteCellInRecordById(long idRecord, long idCell){
         try {
-            FuncTable table = ftRepo.findById(idRecord).get();
-            List<FuncTableCell> cells = table.
+            FuncTable temp = ftRepo.findById(idRecord).get();
+            FuncTable table = new FuncTable();
+            table.setRecordName(temp.getRecordName());
+            table.setId(temp.getId());
+
+            List<FuncTableCell> cells = temp.
                     getCells().
                     stream().
                     filter(c -> c.getId() != idCell).
                     collect(Collectors.toList());
+
+            //Для того, чтобы не сбивался count ячеек
+            AtomicLong count = new AtomicLong(1);
+            cells.stream().forEach(c -> {
+                c.setCellCount(count.get());
+                count.getAndIncrement();
+            });
+            for (FuncTableCell c : cells) {
+                temp.removeCell(c);
+            }
+
+            table.setCells(cells);
+            ftRepo.save(table);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Удалить ячеку по count
+     * @param idRecord
+     * @param countCell
+     * @return
+     */
+    public ResponseEntity deleteCellInRecord(long idRecord, long countCell){
+        try {
+            FuncTable temp = ftRepo.findById(idRecord).get();
+            FuncTable table = new FuncTable();
+            table.setRecordName(temp.getRecordName());
+            table.setId(temp.getId());
+
+            List<FuncTableCell> cells = temp.
+                    getCells().
+                    stream().
+                    filter(c -> c.getCellCount() != countCell).
+                    collect(Collectors.toList());
+
+            //Для того, чтобы не сбивался count ячеек
+            AtomicLong count = new AtomicLong(1);
+            cells.stream().forEach(c -> {
+                c.setCellCount(count.get());
+                count.getAndIncrement();
+            });
+            for (FuncTableCell c : cells) {
+                temp.removeCell(c);
+            }
+
             table.setCells(cells);
             ftRepo.save(table);
 
@@ -229,12 +343,27 @@ public class FuncTableService implements ReferenceService {
      */
     public ResponseEntity deleteCellInRecord(long idRecord, String cellName){
         try {
-            FuncTable table = ftRepo.findById(idRecord).get();
-            List<FuncTableCell> cells = table.
+            FuncTable temp = ftRepo.findById(idRecord).get();
+            FuncTable table = new FuncTable();
+            table.setRecordName(temp.getRecordName());
+            table.setId(temp.getId());
+
+            List<FuncTableCell> cells = temp.
                     getCells().
                     stream().
                     filter(c -> !c.getCellName().equals(cellName)).
                     collect(Collectors.toList());
+
+            //Для того, чтобы не сбивался count ячеек
+            AtomicLong count = new AtomicLong(1);
+            cells.stream().forEach(c -> {
+                c.setCellCount(count.get());
+                count.getAndIncrement();
+            });
+            for (FuncTableCell c : cells) {
+                temp.removeCell(c);
+            }
+
             table.setCells(cells);
             ftRepo.save(table);
 
@@ -247,17 +376,32 @@ public class FuncTableService implements ReferenceService {
     /**
      * Удалить ячеку по id, с указанием имени записи
      * @param recordName
-     * @param idCell
+     * @param countCell
      * @return
      */
-    public ResponseEntity deleteCellInRecord(String recordName, long idCell){
+    public ResponseEntity deleteCellInRecord(String recordName, long countCell){
         try {
-            FuncTable table = ftRepo.findByRecordName(recordName).get(0);
-            List<FuncTableCell> cells = table.
+            FuncTable temp = ftRepo.findByRecordName(recordName).get(0);
+            FuncTable table = new FuncTable();
+            table.setRecordName(temp.getRecordName());
+            table.setId(temp.getId());
+
+            List<FuncTableCell> cells = temp.
                     getCells().
                     stream().
-                    filter(c -> c.getId() != idCell).
+                    filter(c -> c.getCellCount() != countCell).
                     collect(Collectors.toList());
+
+            //Для того, чтобы не сбивался count ячеек
+            AtomicLong count = new AtomicLong(1);
+            cells.stream().forEach(c -> {
+                c.setCellCount(count.get());
+                count.getAndIncrement();
+            });
+            for (FuncTableCell c : cells) {
+                temp.removeCell(c);
+            }
+
             table.setCells(cells);
             ftRepo.save(table);
 
@@ -275,17 +419,35 @@ public class FuncTableService implements ReferenceService {
      */
     public ResponseEntity deleteCellInRecord(String recordName, String cellName){
         try {
-            FuncTable table = ftRepo.findByRecordName(recordName).get(0);
-            List<FuncTableCell> cells = table.
+            FuncTable temp = ftRepo.findByRecordName(recordName).get(0);
+            FuncTable table = new FuncTable();
+            table.setRecordName(temp.getRecordName());
+            table.setId(temp.getId());
+
+            List<FuncTableCell> cells = temp.
                     getCells().
                     stream().
                     filter(c -> !c.getCellName().equals(cellName)).
                     collect(Collectors.toList());
             table.setCells(cells);
+
+            //Для того, чтобы не сбивался count ячеек
+            AtomicLong count = new AtomicLong(1);
+            cells.stream().forEach(c -> {
+                c.setCellCount(count.get());
+                count.getAndIncrement();
+            });
+            for (FuncTableCell c : cells) {
+                temp.removeCell(c);
+            }
+
+            table.setCells(cells);
             ftRepo.save(table);
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (IndexOutOfBoundsException e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
@@ -313,5 +475,9 @@ public class FuncTableService implements ReferenceService {
 
             return null;
         }
+    }
+
+    public FuncTableRepository getFtRepo(){
+        return ftRepo;
     }
 }

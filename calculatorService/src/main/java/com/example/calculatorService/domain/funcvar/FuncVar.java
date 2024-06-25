@@ -35,6 +35,8 @@ public class FuncVar {
 
     @Column(name="`result`")
     private List<String> result;
+    @Column(name="`resultString`")
+    private String resultString;
     ////////////////////////////////////////////////////////////////////
 
     public FuncVar(@Nonnull String expression) {

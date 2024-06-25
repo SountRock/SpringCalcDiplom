@@ -7,10 +7,7 @@ import com.example.calculatorService.domain.table.funcTable.FuncTableCell;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorService.exceptions.TableReferenceErrorException;
-import com.example.calculatorService.repository.CustomFunctionRepository;
-import com.example.calculatorService.repository.FuncTableRepository;
-import com.example.calculatorService.repository.FuncVarRepository;
-import com.example.calculatorService.repository.RangeTableRepository;
+import com.example.calculatorService.repository.*;
 import com.example.calculatorService.service.MathModels.ModelCustomRightSide;
 import com.example.calculatorService.service.MathModels.ModelCustomTwoSides;
 import com.example.calculatorService.service.Tools.AnaliseExpression;
@@ -335,6 +332,14 @@ public interface ReferenceService {
         return expression;
     }
 
+    /**
+     * Собрать аргументы по индексу начала поиска и конца поиска
+     * @param expression
+     * @param startIndex
+     * @param endValue
+     * @return
+     * @throws IndexOutOfBoundsException
+     */
     private HashMap<String, String> compareArgs(List<String> expression, int startIndex, String endValue) throws IndexOutOfBoundsException{
         HashMap<String, String> params = new HashMap<>();
 
@@ -349,6 +354,13 @@ public interface ReferenceService {
         return params;
     }
 
+    /**
+     * Найти упоменания "своих функций"
+     * @param expression
+     * @param customRepo
+     * @param analiser
+     * @return
+     */
     default List<String> findNCalculateCustomFunc(List<String> expression, CustomFunctionRepository customRepo, AnaliseExpression analiser) {
         try {
             List<CustomFunction> funcs = customRepo.findAll();
@@ -378,20 +390,20 @@ public interface ReferenceService {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * Найти ссылки на другие функции.
-     * Синтаксис1: ref(имя_записи, номер_ячейки);
-     * Синтаксис2.1: ref(имя_записи, с_номера..по_номер);
-     * Синтаксис2.2: ref(имя_записи, с_номера..по_номер, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (2.1);
+     * Найти ссылки на другие функции по номеру ячейки.
+     * Синтаксис1: count(имя_записи, номер_ячейки);
+     * Синтаксис2.1: count(имя_записи, с_номера..по_номер);
+     * Синтаксис2.2: count(имя_записи, с_номера..по_номер, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (2.1);
      * @param expression
      * @return
      */
-    default List<String> findFuncTableReferencesById(List<String> expression, FuncTableRepository tfRepo) throws NoSuchElementException, ReferenceResultIsEmpty{
+    default List<String> findFuncTableReferencesByCount(List<String> expression, FuncTableRepository tfRepo) throws NoSuchElementException, ReferenceResultIsEmpty{
         if(expression == null){
             return null;
         }
         //вставка результата другого выражения по count
         for (int i = 0; i < expression.size(); i++) {
-            if(expression.get(i).equals("ref")){
+            if(expression.get(i).equals("count")){
                 try {
                     String recordName = expression.get(i + 2).replaceAll(" ", "");
                     FuncTable record = tfRepo.findByRecordName(recordName).get(0);
@@ -451,6 +463,83 @@ public interface ReferenceService {
                             }
 
                             i += resultByCount.size();
+                        }
+                    }
+                } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+
+                    return null;
+                } catch (NullPointerException e){
+                    throw new ReferenceResultIsEmpty();
+                }
+            }
+        }
+
+        return expression;
+    }
+
+    /**
+     * Найти ссылки на другие функции по номеру ячейки.
+     * Синтаксис1: ref(id);
+     * Синтаксис2.1: ref(с_id..по_id);
+     * Синтаксис2.2: ref(с_id..по_id, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (2.1);
+     * @param expression
+     * @return
+     */
+    default List<String> findFuncTableReferencesById(List<String> expression, FuncTableCellRepository tfcRepo) throws NoSuchElementException, ReferenceResultIsEmpty{
+        if(expression == null){
+            return null;
+        }
+        //вставка результата другого выражения по id
+        for (int i = 0; i < expression.size(); i++) {
+            if(expression.get(i).equals("ref")){
+                try {
+                    String ids = expression.get(i + 2).replaceAll(" ", "");
+                    //Когда мы хотим получить несколько результатов по id и както их объединить
+                    if(ids.indexOf("..") > 0) {
+                        //Операция объединения результатов выражений по умолчанию сложение
+                        String operationBetweenResultsById = "+";
+                        byte sizeLabelRef = 4; //Размер самой ссылки в выражении, для того, чтобы мы могли ее стереть после вставки значения по ней
+                        //Ищем указана ли операция объединения результатов выражений
+                        if(expression.get(i + 3).equals(",")){
+                            operationBetweenResultsById = expression.get(i + 4);
+                            sizeLabelRef = 6;
+                        }
+
+                        //Теперь разделяем диапазон иднексов
+                        String[] idsArr = ids.split("\\.\\.");
+                        try {
+                            long start = Long.parseLong(idsArr[0]);
+                            long end = Long.parseLong(idsArr[1]);
+                            List<String> result = new ArrayList<>();
+                            for (long j = start; j < end + 1; j++) {
+                                FuncTableCell tempFunc = tfcRepo.findById(j).get();
+                                result.add("(");
+                                result.addAll(tempFunc.getResult());
+                                result.add(")");
+                                result.add(operationBetweenResultsById);
+                            }
+
+                            result.remove(result.size() - 1);
+                            expression.addAll(i, result);
+                            for (byte j = 0; j < sizeLabelRef; j++) {
+                                expression.remove(i + result.size());
+                            }
+                            i += result.size();
+                        } catch (ArrayIndexOutOfBoundsException e){
+                            e.printStackTrace();
+                        }
+                    } else {
+                        long idFunc = Long.parseLong(ids);
+
+                        FuncTableCell temp = tfcRepo.findById(idFunc).get();
+                        List<String> resultById = temp.getResult();
+                        if(resultById != null){
+                            expression.remove(i + 2);
+                            expression.remove(i);
+                            expression.addAll(i + 1, resultById);
+
+                            i += resultById.size();
                         }
                     }
                 } catch (NumberFormatException e) {
@@ -513,7 +602,7 @@ public interface ReferenceService {
                     }
 
                     i += result.size();
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | IndexOutOfBoundsException e) {
                     e.printStackTrace();
 
                     return null;

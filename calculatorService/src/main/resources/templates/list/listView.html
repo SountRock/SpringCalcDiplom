@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link th:href="@{/style.css}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Func List</title>
+</head>
+<body>
+<div class="cellValue" th:each="func : ${funcs}">
+    <div class="cellView">
+        <div class="stringHead border">
+            <label th:text="'Id: ' + ${func.id}"></label>
+            <label th:text="'Name: ' + ${func.name}"></label>
+            <label th:text="'Create Date: ' + ${func.createDate}"></label>
+        </div>
+        <div class="cellValue">
+            <label th:text="'Expression: ' + ${func.expression}"></label>
+            <label th:text="'Result: ' + ${func.resultString}"></label>
+            <a th:href="@{delete-func(id=${func.id})}">Delete</a>
+        </div>
+    </div>
+</div>
+<div class="separator"></div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{calculate-func}" method="get">
+            <label>Calculate</label>
+            <div class="edit">
+                <label>Name: </label>
+                <input type="text" name="name"/>
+            </div>
+            <div class="edit">
+                <label>Expression: </label>
+                <input type="text" name="expression"/>
+            </div>
+            <button class="button" type="submit">Calculate</button>
+        </form>
+    </div>
+    <div class="redactView">
+        <form th:action="@{clear}" method="get">
+            <button class="button" type="submit">Clear All</button>
+        </form>
+    </div>
+</div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{download}" method="get">
+            <label>Download Table: </label>
+            <div class="edit">
+                <label>File Name: </label>
+                <input type="text" name="fileName"/>
+            </div>
+            <button class="button" type="submit">Download</button>
+        </form>
+    </div>
+    <div class="redactView">
+        <form method="post" th:action="@{upload}" enctype="multipart/form-data">
+            <label th:text="'Upload Table: ' + ${message}" th:if="${message ne null}"></label>
+            <div class="edit">
+                <input type="file" name="file" class="button">
+            </div>
+            <button type="submit" class="button">Upload</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

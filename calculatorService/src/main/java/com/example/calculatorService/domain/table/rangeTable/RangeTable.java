@@ -1,5 +1,6 @@
 package com.example.calculatorService.domain.table.rangeTable;
 
+import com.example.calculatorService.domain.table.funcTable.FuncTableCell;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -34,12 +35,14 @@ public class RangeTable {
 
     @Column(name="`ranges`")
     //@OneToMany(mappedBy = "rangeTable", cascade = CascadeType.ALL)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Range> ranges;
+    @Column(name="`rangesFormula`")
+    private String rangesFormula;
 
     @Column(name="`results`")
     //@OneToMany(mappedBy = "rangeTable", cascade = CascadeType.ALL)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
     private List<ResultWithParams> results;
     ////////////////////////////////////////////////////////////////////
 
@@ -48,4 +51,20 @@ public class RangeTable {
     }
 
     public RangeTable() {}
+
+    public void removeRanges() {
+        while (!ranges.isEmpty()){
+            Range temp = ranges.get(0);
+            temp.setRangeTable(null);
+            ranges.remove(0);
+        }
+    }
+
+    public void removeResults() {
+        while (!results.isEmpty()){
+            ResultWithParams temp = results.get(0);
+            temp.setRangeTable(null);
+            results.remove(0);
+        }
+    }
 }

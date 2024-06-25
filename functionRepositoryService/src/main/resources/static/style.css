@@ -1,0 +1,102 @@
+body{
+    background: #FFFFFF;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+
+    font: Georgia;
+    font-size: 21px;
+}
+
+.funcHead {
+    background: #36DDE8;
+        display: flex;
+            flex-direction: column;
+
+        min-width: 150px;
+        min-height: 70px;
+        text-align: left;
+}
+
+.stepsList {
+    height: 100px;
+        display: flex;
+            flex-direction: column;
+        border: 2px solid #00E699;
+}
+
+.stepsHead {
+    background: #88F8FF;
+    display: flex;
+            flex-direction: column;
+        min-width: 150px;
+        height: 70px;
+        text-align: left;
+}
+
+.stepsValue {
+    background: #F0F8FF;
+    display: flex;
+            flex-direction: column;
+        width: 100%;
+        height: 80px;
+        text-align: left;
+}
+
+.deletePanel {
+    background: #d8f9fb;
+        display: flex;
+            justify-content: space-evenly;
+}
+
+.button{
+    background: #1BE7AF;
+    height: 30px;
+    width:100%;
+    border: 2px solid #18C495;
+
+    font: Georgia;
+        font-size: 21px;
+    align-content: center;
+}
+
+.resultHead {
+    background: #88F8FF;
+    min-width: 150px;
+    height: 100px;
+    text-align: left;
+}
+
+.edit {
+    margin-bottom: 5px;
+    display: flex;
+        justify-content: space-between;
+}
+
+
+.separator {
+    height: 30px;
+}
+
+.description {
+    overflow-wrap: anywhere;
+}
+
+.redactTable {
+    display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.redactView {
+    border: 2px solid #00E699;
+    background: #F0F8FF;
+    display: flex;
+      align-items: center;
+      justify-content: center;
+      align-content: space-between;
+
+    min-width: 500px;
+    min-height: 200px;
+}

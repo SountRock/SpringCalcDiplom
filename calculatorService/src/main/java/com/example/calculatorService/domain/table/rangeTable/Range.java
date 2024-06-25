@@ -23,8 +23,8 @@ public class Range {
     @Column(name="`step`")
     private double step;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "rangeTable_id")
-    //@JsonIgnore
-    //private RangeTable rangeTable;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rangeTable_id")
+    @JsonIgnore
+    private RangeTable rangeTable;
 }

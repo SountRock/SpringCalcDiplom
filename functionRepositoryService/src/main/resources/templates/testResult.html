@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link th:href="@{/style.css}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Result</title>
+</head>
+<body>
+<div class="separator"></div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{list}" method="get">
+            <div class="edit">
+                <label>Expression: </label>
+                <input readonly type="text" name="testCF" th:value="${testCF}"/>
+            </div>
+            <div class="edit">
+                <label>Result: </label>
+                <input readonly type="text" name="result" th:value="${result}"/>
+            </div>
+            <button class="button" type="submit">Return</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

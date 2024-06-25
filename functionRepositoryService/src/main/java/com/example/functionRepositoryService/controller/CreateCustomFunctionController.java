@@ -1,12 +1,14 @@
 package com.example.functionRepositoryService.controller;
 
 import com.example.functionRepositoryService.domain.CustomFunction;
+import com.example.functionRepositoryService.repository.CustomFunctionRepository;
 import com.example.functionRepositoryService.service.ImplService.CustomFuncService;
 import com.example.functionRepositoryService.service.Tools.PrepareExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +30,11 @@ public class CreateCustomFunctionController {
      */
     @PostMapping("/create/{head}/{steps}/{description}")
     public ResponseEntity addCustomFunc(@PathVariable("head") String head, @PathVariable("steps") String steps, @PathVariable("description") String description){
-        return service.createCustomFunc(head, steps, description);
+        try {
+            return service.createCustomFunc(head, steps, description);
+        } catch (UnexpectedRollbackException e){
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        }
     }
 
     /**
@@ -97,5 +103,9 @@ public class CreateCustomFunctionController {
     public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
         List<String> files = service.showFiles("functionRepositoryService/" + directory);
         return new ResponseEntity<>(files, HttpStatus.OK);
+    }
+
+    public CustomFunctionRepository getRepo(){
+        return service.getCustomRepo();
     }
 }

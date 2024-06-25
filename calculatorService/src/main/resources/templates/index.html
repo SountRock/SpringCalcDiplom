@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link th:href="@{/style.css}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Choice</title>
+</head>
+<body>
+<div class="separator"></div>
+
+<div class="separator"></div>
+
+<div class="options">
+    <div class="option">
+        <label th:text="${responseLoad}"></label>
+    </div>
+    <div class="option">
+        <a th:href="@{/funcList}">Func List</a>
+    </div>
+    <div class="option">
+        <a th:href="@{/funcTable}">Func Table</a>
+    </div>
+    <div class="option">
+        <a th:href="@{/rangeTable}">Range Table</a>
+    </div>
+    <div class="option">
+        <a th:href="@{loadFromCFServer}">Load Custom Func's From Server</a>
+    </div>
+</div>
+</body>
+</html>

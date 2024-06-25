@@ -1,6 +1,7 @@
 package com.example.calculatorService.controller;
 
 import com.example.calculatorService.domain.funcvar.FuncVar;
+import com.example.calculatorService.repository.FuncVarRepository;
 import com.example.calculatorService.service.ImplService.FuncVarService;
 import com.example.calculatorService.service.SaveDocument;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +35,6 @@ public class FuncListController implements SaveDocument<FuncVar> {
         service.addFunc(funcVar);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("form")
-    public ResponseEntity<FuncVar> getForm(){
-        FuncVar temp = new FuncVar("1+1");
-        temp.setResult(new ArrayList<>(List.of("12", "13")));
-        temp.setCreateDate(LocalDateTime.now());
-        temp.setName("form");
-
-        return new ResponseEntity<>(temp, HttpStatus.OK);
     }
 
     /*
@@ -80,7 +72,7 @@ public class FuncListController implements SaveDocument<FuncVar> {
     }
 
     @GetMapping("history")
-    public ResponseEntity getHistory(){
+    public ResponseEntity<List<FuncVar>> getHistory(){
         return service.getHistory();
     }
 
@@ -129,5 +121,9 @@ public class FuncListController implements SaveDocument<FuncVar> {
     public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
         List<String> files = showFiles("calculatorService/" + directory);
         return new ResponseEntity<>(files, HttpStatus.OK);
+    }
+
+    public FuncVarRepository getRepo(){
+        return service.getFuncRepo();
     }
 }

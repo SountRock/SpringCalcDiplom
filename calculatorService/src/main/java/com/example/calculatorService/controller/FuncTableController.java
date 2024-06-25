@@ -4,6 +4,7 @@ import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.example.calculatorService.domain.table.funcTable.FuncTableCell;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
+import com.example.calculatorService.repository.FuncTableRepository;
 import com.example.calculatorService.service.CustomFuncRepositoryConnectServer;
 import com.example.calculatorService.service.ImplService.FuncTableService;
 import com.example.calculatorService.service.ImplService.FuncVarService;
@@ -56,9 +57,9 @@ public class FuncTableController implements SaveDocument<FuncTable> {
         return service.deleteRecordByName(name);
     }
 
-    @DeleteMapping("deleteCellById/{recordId}/{cellId}")
-    public ResponseEntity deleteCell(@PathVariable("recordId") long recordId, @PathVariable("cellId") long cellId){
-        return service.deleteCellInRecord(recordId, cellId);
+    @DeleteMapping("deleteCellByCount/{recordId}/{cellCount}")
+    public ResponseEntity deleteCell(@PathVariable("recordId") long recordId, @PathVariable("cellCount") long cellCount){
+        return service.deleteCellInRecord(recordId, cellCount);
     }
 
     @DeleteMapping("deleteCellsByName/{recordId}/{cellName}")
@@ -66,14 +67,34 @@ public class FuncTableController implements SaveDocument<FuncTable> {
         return service.deleteCellInRecord(recordId, cellName);
     }
 
-    @DeleteMapping("deleteCellByIdWithRecordName/{recordName}/{cellId}")
-    public ResponseEntity deleteCell(@PathVariable("recordName") String recordName, @PathVariable("cellId") long cellId){
-        return service.deleteCellInRecord(recordName, cellId);
+    @DeleteMapping("deleteCellByCountWithRecordName/{recordName}/{cellCount}")
+    public ResponseEntity deleteCell(@PathVariable("recordName") String recordName, @PathVariable("cellId") long cellCount){
+        return service.deleteCellInRecord(recordName, cellCount);
     }
 
     @DeleteMapping("deleteCellsByNameWithRecordName/{recordName}/{cellName}")
     public ResponseEntity deleteCell(@PathVariable("recordName") String recordName, @PathVariable("recordName") String cellName){
         return service.deleteCellInRecord(recordName, cellName);
+    }
+
+    @PostMapping("updateCell")
+    public ResponseEntity updateCell(@RequestBody FuncTableCell cell){
+        return service.calculateCell(cell);
+    }
+
+    @DeleteMapping("deleteCellById/{idRecord}/{idCell}")
+    public ResponseEntity deleteCellById(@PathVariable("idRecord") long idRecord, @PathVariable("idCell") long idCell){
+        return service.deleteCellInRecordById(idRecord, idCell);
+    }
+
+    @GetMapping("getRecordByName/{recordName}")
+    public ResponseEntity<FuncTable> findRecordByName(@PathVariable("recordName") String recordName){
+        return service.findRecordByName(recordName);
+    }
+
+    @GetMapping("getCellById/{id}")
+    public ResponseEntity<FuncTableCell> findRCellById(@PathVariable("id") long id){
+        return service.findCellById(id);
     }
 
     @PostMapping("saveTable/{directory}/{fileName}")
@@ -106,5 +127,9 @@ public class FuncTableController implements SaveDocument<FuncTable> {
     public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
         List<String> files = showFiles("calculatorService/" + directory);
         return new ResponseEntity<>(files, HttpStatus.OK);
+    }
+
+    public FuncTableRepository getRepo(){
+        return service.getFtRepo();
     }
 }

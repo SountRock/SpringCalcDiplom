@@ -237,11 +237,16 @@ public class RangeTableService implements ReferenceService {
             result = analiser.analise(expressionTemp);
             List<Param> params = new ArrayList<>();
             for (int i = 0; i < currentValues.length; i++) {
-                params.add(new Param(ranges.get(i).getName(), Double.toString(currentValues[i])));
+                params.add(new Param(ranges.get(i).getName(),
+                        String.format("%.3f", currentValues[i])
+                ));
             }
 
-            results.add(new ResultWithParams(params, result));
-
+            String stringResult = result.toString()
+                    .replaceAll("\\[", "")
+                    .replaceAll("\\]", "")
+                    .replaceAll(",", "");
+            results.add(new ResultWithParams(params, stringResult, result));
 
             if(!isEnd){
                 return calculateIteration(expression, ranges, currentValues, results);
@@ -351,7 +356,6 @@ public class RangeTableService implements ReferenceService {
                 }
             }
             //На случай если переменные с диапазона обновились и их нужно вытащить из "обертки" в которую они попали ранее
-
             if(isAllPasted){
                 for (int i = 0; i < expressionTemp.size(); i++) {
                     if(!expressionTemp.get(i).equals("[") && expressionTemp.get(i).equals("]")){
@@ -366,10 +370,16 @@ public class RangeTableService implements ReferenceService {
             result = analiser.analise(expressionTemp);
             List<Param> params = new ArrayList<>();
             for (int i = 0; i < currentValues.length; i++) {
-                params.add(new Param(ranges.get(i).getName(), Double.toString(currentValues[i])));
+                params.add(new Param(ranges.get(i).getName(),
+                        String.format("%.3f", currentValues[i])
+                ));
             }
 
-            results.add(new ResultWithParams(params, result));
+            String stringResult = result.toString()
+                    .replaceAll("\\[", "")
+                    .replaceAll("\\]", "")
+                    .replaceAll(",", "");
+            results.add(new ResultWithParams(params, stringResult, result));
             currentCountIteration++;
 
             if(!isEnd){
@@ -405,5 +415,9 @@ public class RangeTableService implements ReferenceService {
 
             return null;
         }
+    }
+
+    public RangeTableRepository getTableRepo() {
+        return tableRepo;
     }
 }

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -99,12 +100,14 @@ public class CustomFuncService implements ReferenceService {
         newFunc.setCountInputVars(vars.size());
 
         //Добавление внутрених переменных (шагов)
-        String[] stepsNCountSplit = steps.replaceAll("%0A", "&").split(":");
-        //String[] stepsNCountSplit = steps.replaceAll("\n", "&").split(":");
+        String[] stepsNCountSplit = steps.replaceAll("\n", "&").split(":");
+        //Exception ee = new Exception(Arrays.toString(stepsNCountSplit));
+        //ee.printStackTrace();
         try {
             try {
                 String count = stepsNCountSplit[1];
-
+                newFunc.setRepeatCount(count);
+                /*
                 boolean isFind = false;
                 for (int j = 0; !isFind && j < vars.size(); j++) {
                     if(count.equals(vars.get(j).getName())){
@@ -112,6 +115,7 @@ public class CustomFuncService implements ReferenceService {
                         isFind = true;
                     }
                 }
+                 */
             } catch (ArrayIndexOutOfBoundsException e){
                 newFunc.setRepeatCount("1");
             }
@@ -138,7 +142,12 @@ public class CustomFuncService implements ReferenceService {
         }
 
         newFunc.setSteps(vars);
-        newFunc.setDescription(description);
+
+        if(description.length() < 255) {
+            newFunc.setDescription(description);
+        } else {
+            newFunc.setDescription(description.substring(0, 254));
+        }
 
         try {
             customRepo.save(newFunc);
@@ -278,5 +287,9 @@ public class CustomFuncService implements ReferenceService {
 
     public void loadFuncs(List<CustomFunction> funcs){
         customRepo.saveAll(funcs);
+    }
+
+    public CustomFunctionRepository getCustomRepo(){
+        return customRepo;
     }
 }
