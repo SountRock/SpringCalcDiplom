@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.calculatorService.service.MathModels.Operation;
+import lombok.Data;
 
 /**
  * Класс анализирующий выражение на выполнение указанных операций.

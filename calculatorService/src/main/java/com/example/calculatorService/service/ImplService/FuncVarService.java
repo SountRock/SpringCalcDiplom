@@ -197,4 +197,12 @@ public class FuncVarService implements ReferenceService {
     public FuncVarRepository getFuncRepo(){
         return funcRepo;
     }
+
+    public void setAnaliser(AnaliseExpression analiser) {
+        this.analiser = analiser;
+    }
+
+    public AnaliseExpression getAnaliser() {
+        return analiser;
+    }
 }

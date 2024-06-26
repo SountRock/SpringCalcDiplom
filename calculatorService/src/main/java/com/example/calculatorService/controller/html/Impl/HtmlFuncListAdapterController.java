@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,6 +75,18 @@ public class HtmlFuncListAdapterController implements HtmlDownloadControllerInte
         }
     }
 
+    @Override
+    public FuncVar getEntityForTable(FuncVar loadEntity) {
+        FuncVar temp = new FuncVar();
+        temp.setName(loadEntity.getName());
+        temp.setExpression(loadEntity.getExpression());
+        temp.setResult(loadEntity.getResult());
+        temp.setResultString(loadEntity.getResultString());
+        temp.setCreateDate(loadEntity.getCreateDate());
+
+        return temp;
+    }
+
     @PostMapping("/upload")
     public String uploadFileWithEntitiesADD(@RequestParam("file") MultipartFile file, RedirectAttributes attributes){
         if (file.isEmpty()) {
@@ -84,7 +97,11 @@ public class HtmlFuncListAdapterController implements HtmlDownloadControllerInte
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<FuncVar> list = List.of(mapper.readValue(file.getBytes(), FuncVar[].class));
-            controller.getRepo().saveAll(list);
+            for (FuncVar f : list) {
+                try {
+                    controller.getRepo().save(getEntityForTable(f));
+                } catch (DataIntegrityViolationException | IllegalStateException e){}
+            }
         } catch (IOException e) {}
 
         attributes.addFlashAttribute("message", "Successfully uploaded " + file.getName() + '!');

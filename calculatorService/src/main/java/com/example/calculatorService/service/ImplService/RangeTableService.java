@@ -420,4 +420,12 @@ public class RangeTableService implements ReferenceService {
     public RangeTableRepository getTableRepo() {
         return tableRepo;
     }
+
+    public AnaliseExpression getAnaliser() {
+        return analiser;
+    }
+
+    public void setAnaliser(AnaliseExpression analiser) {
+        this.analiser = analiser;
+    }
 }

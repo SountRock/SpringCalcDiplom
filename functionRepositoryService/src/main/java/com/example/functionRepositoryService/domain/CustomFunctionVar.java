@@ -21,6 +21,8 @@ public class CustomFunctionVar {
     private List<String> expression;
     @Column(name="`value`")
     private List<String> value;
+    @Column(name="`workExpression`")
+    private List<String> workExpression;
     @Column(name="`defaultValue`")
     private List<String> defaultValue;
 

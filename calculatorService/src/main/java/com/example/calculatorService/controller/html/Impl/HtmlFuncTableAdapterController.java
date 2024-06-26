@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -155,6 +156,26 @@ public class HtmlFuncTableAdapterController implements HtmlDownloadControllerInt
         }
     }
 
+    @Override
+    public FuncTable getEntityForTable(FuncTable loadEntity) {
+        FuncTable temp = new FuncTable();
+        temp.setRecordName(loadEntity.getRecordName());
+        List<FuncTableCell> cells = new ArrayList<>();
+        for (FuncTableCell c : loadEntity.getCells()) {
+            FuncTableCell tempCell = new FuncTableCell();
+            tempCell.setCellCount(c.getCellCount());
+            tempCell.setCellName(c.getCellName());
+            tempCell.setExpression(c.getExpression());
+            tempCell.setResult(c.getResult());
+            tempCell.setResultString(c.getResultString());
+
+            cells.add(tempCell);
+        }
+        temp.setCells(cells);
+
+        return temp;
+    }
+
     @PostMapping("/upload")
     public String uploadFileWithEntitiesADD(@RequestParam("file") MultipartFile file, RedirectAttributes attributes){
         if (file.isEmpty()) {
@@ -167,7 +188,19 @@ public class HtmlFuncTableAdapterController implements HtmlDownloadControllerInt
             List<FuncTable> list = List.of(mapper.readValue(file.getBytes(), FuncTable[].class));
             for (FuncTable t : list) {
                 try {
-                    controller.getRepo().save(t);
+                    List<FuncTable> temp = controller.getRepo().findByRecordName(t.getRecordName());
+                    FuncTable prepareTable = getEntityForTable(t);
+                    if(temp.isEmpty()){
+                        controller.getRepo().save(prepareTable);
+                    } else {
+                        FuncTable findTable = temp.get(0);
+
+                        List<FuncTableCell> cells = findTable.getCells();
+                        cells.addAll(prepareTable.getCells());
+                        findTable.setCells(cells);
+
+                        controller.getRepo().save(findTable);
+                    }
                 } catch (DataIntegrityViolationException e){}
             }
         } catch (IOException e) {}

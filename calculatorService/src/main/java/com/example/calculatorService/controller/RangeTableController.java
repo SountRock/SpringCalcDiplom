@@ -177,7 +177,7 @@ public class RangeTableController implements SaveDocument<RangeTable> {
     @PostMapping("saveTable/{directory}/{fileName}")
     public ResponseEntity saveTable(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
         try {
-            boolean isSave = saveDocument("calculatorService/" + directory, fileName, service.getAllTables());
+            boolean isSave = saveDocument("calculatorService/" + directory, fileName, "RT", service.getAllTables());
             if(isSave){
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {

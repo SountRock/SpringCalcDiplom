@@ -18,13 +18,13 @@ public interface SaveDocument<T> {
      * @param entities
      * @return
      */
-    default boolean saveDocument(String directory, String fileName, List<T> entities) {
+    default boolean saveDocument(String directory, String fileName, String filePreFormantValue, List<T> entities) {
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(directory);
         file.mkdirs();
         try {
             file = new File(directory,
-                    fileName + "." + entities.get(0).getClass().getSimpleName() +
+                    fileName + "." + filePreFormantValue +
                     ".json");
 
             mapper.writeValue(file, entities);

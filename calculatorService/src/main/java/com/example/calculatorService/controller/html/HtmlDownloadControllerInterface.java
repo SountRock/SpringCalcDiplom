@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public interface HtmlDownloadControllerInterface<T> {
+    /**
+     * Скачать файл
+     * @param fileName
+     * @param preFormantValue
+     * @param response
+     * @throws IOException
+     */
     default void downloadFile(String fileName, String preFormantValue, HttpServletResponse response) throws IOException {
         try {
             List<T> list = getEntities();
@@ -34,5 +41,15 @@ public interface HtmlDownloadControllerInterface<T> {
         } catch (NoSuchElementException e){}
     }
 
+    /**
+     * Получить сущности
+     * @return
+     */
     List<T> getEntities();
+
+    /**
+     * Получить обработаное значение сущности для добавления в репозиторий
+     * @return
+     */
+    T getEntityForTable(T loadEntity);
 }

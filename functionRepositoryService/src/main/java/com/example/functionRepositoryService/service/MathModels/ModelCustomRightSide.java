@@ -47,7 +47,7 @@ public class ModelCustomRightSide extends RightSideSearchModel implements Refere
             temp2 = findStepsReferences(inputVars, temp2);
 
             innerVars.get(i).setValue(temp1);
-            innerVars.get(i).setExpression(temp2);
+            innerVars.get(i).setWorkExpression(temp2);
         }
 
         long count = 1;
@@ -64,18 +64,17 @@ public class ModelCustomRightSide extends RightSideSearchModel implements Refere
 
         //Расчитываем функцию по шагам нужное количесво циклов
         int i = 1;
-        do {
+        while (i < count) {
             for (int j = 0; j < innerVars.size(); j++) {
                 //Заполняем ссылки на предыдущие шаги переменные в внутрених.
                 //List<String> result = findPreviousStepsReferences(innerVars, innerVars.get(j));
-                List<String> result = findStepsReferences(innerVars, innerVars.get(j).getExpression());
+                List<String> result = findStepsReferences(innerVars, innerVars.get(j).getWorkExpression());
 
                 result = analizer.analise(result);
                 innerVars.get(j).setValue(result);
             }
             i++;
-        } while (i < count);
-
+        }
 
         expression.remove(positionIndex);
 

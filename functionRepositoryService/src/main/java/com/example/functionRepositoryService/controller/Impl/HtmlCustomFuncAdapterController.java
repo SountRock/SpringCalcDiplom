@@ -3,6 +3,7 @@ package com.example.functionRepositoryService.controller.Impl;
 import com.example.functionRepositoryService.controller.CreateCustomFunctionController;
 import com.example.functionRepositoryService.controller.HtmlDownloadControllerInterface;
 import com.example.functionRepositoryService.domain.CustomFunction;
+import com.example.functionRepositoryService.domain.CustomFunctionVar;
 import com.example.functionRepositoryService.service.Tools.PrepareExpression;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -111,6 +113,28 @@ public class HtmlCustomFuncAdapterController implements HtmlDownloadControllerIn
         }
     }
 
+    @Override
+    public CustomFunction getEntityForTable(CustomFunction loadEntity) {
+        CustomFunction temp = new CustomFunction();
+        temp.setName(loadEntity.getName());
+        temp.setTypeSearch(loadEntity.getTypeSearch());
+        temp.setRepeatCount(loadEntity.getRepeatCount());
+        temp.setDescription(loadEntity.getDescription());
+        temp.setCountInputVars(loadEntity.getCountInputVars());
+        List<CustomFunctionVar> steps = new ArrayList<>();
+        for (CustomFunctionVar v : loadEntity.getSteps()) {
+            CustomFunctionVar tempCF = new CustomFunctionVar();
+            tempCF.setName(v.getName());
+            tempCF.setType(v.getType());
+            tempCF.setExpression(v.getExpression());
+            tempCF.setDefaultValue(v.getDefaultValue());
+            steps.add(tempCF);
+        }
+        temp.setSteps(steps);
+
+        return temp;
+    }
+
     @PostMapping("/upload")
     public String uploadFileWithEntitiesADD(@RequestParam("file") MultipartFile file, RedirectAttributes attributes){
         if (file.isEmpty()) {
@@ -123,8 +147,8 @@ public class HtmlCustomFuncAdapterController implements HtmlDownloadControllerIn
             List<CustomFunction> list = List.of(mapper.readValue(file.getBytes(), CustomFunction[].class));
             for (CustomFunction f : list) {
                 try {
-                    controller.getRepo().save(f);
-                } catch (DataIntegrityViolationException e){}
+                    controller.getRepo().save(getEntityForTable(f));
+                } catch (DataIntegrityViolationException | IllegalStateException e){}
             }
         } catch (IOException e) {}
 

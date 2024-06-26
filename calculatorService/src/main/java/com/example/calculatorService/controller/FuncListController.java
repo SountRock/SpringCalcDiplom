@@ -94,7 +94,7 @@ public class FuncListController implements SaveDocument<FuncVar> {
     @PostMapping("saveList/{directory}/{fileName}")
     public ResponseEntity saveList(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName) {
         try {
-            boolean isSave = saveDocument("calculatorService/" + directory, fileName, service.getHistory().getBody());
+            boolean isSave = saveDocument("calculatorService/" + directory, fileName, "FL", service.getHistory().getBody());
             if (isSave) {
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {

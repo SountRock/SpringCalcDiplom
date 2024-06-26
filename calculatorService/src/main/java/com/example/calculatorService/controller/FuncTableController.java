@@ -100,7 +100,7 @@ public class FuncTableController implements SaveDocument<FuncTable> {
     @PostMapping("saveTable/{directory}/{fileName}")
     public ResponseEntity saveTable(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
         try {
-            boolean isSave = saveDocument("calculatorService/" + directory, fileName, service.getAll().getBody());
+            boolean isSave = saveDocument("calculatorService/" + directory, fileName, "FT", service.getAll().getBody());
             if(isSave){
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {

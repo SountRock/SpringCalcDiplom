@@ -49,8 +49,11 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements CustomOp
                 temp2 = findStepsReferences(inputVars, temp2);
 
                 innerVars.get(i).setValue(temp1);
-                innerVars.get(i).setExpression(temp2);
+                innerVars.get(i).setWorkExpression(temp2);
             }
+
+            Exception ee = new Exception(innerVars.toString());
+            ee.printStackTrace();
 
             long count = 1;
             boolean isFind = false;
@@ -66,17 +69,17 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements CustomOp
 
             //Расчитываем функцию по шагам нужное количесво циклов
             int i = 1;
-            do {
+            while (i < count) {
                 for (int j = 0; j < innerVars.size(); j++) {
                     //Заполняем ссылки на предыдущие шаги переменные в внутрених.
                     //List<String> result = findPreviousStepsReferences(innerVars, innerVars.get(j));
-                    List<String> result = findStepsReferences(innerVars, innerVars.get(j).getExpression());
+                    List<String> result = findStepsReferences(innerVars, innerVars.get(j).getWorkExpression());
 
                     result = analizer.analise(result);
                     innerVars.get(j).setValue(result);
                 }
                 i++;
-            } while (i < count);
+            }
 
             List<String> result = innerVars.get(innerVars.size() - 1).getValue();
             //Вставляем значение из последней внутреней переменной

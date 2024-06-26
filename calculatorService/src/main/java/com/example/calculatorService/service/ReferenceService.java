@@ -50,6 +50,7 @@ public interface ReferenceService {
                             long start = Long.parseLong(idsArr[0]);
                             long end = Long.parseLong(idsArr[1]);
                             List<String> result = new ArrayList<>();
+                            result.add("(");
                             for (long j = start; j < end + 1; j++) {
                                 FuncVar tempFunc = funcRepo.findById(j).get();
                                 result.add("(");
@@ -57,8 +58,9 @@ public interface ReferenceService {
                                 result.add(")");
                                 result.add(operationBetweenResultsById);
                             }
-
                             result.remove(result.size() - 1);
+                            result.add(")");
+
                             expression.addAll(i, result);
                             for (byte j = 0; j < sizeLabelRef; j++) {
                                 expression.remove(i + result.size());
@@ -127,14 +129,16 @@ public interface ReferenceService {
                     }
 
                     List<String> result = new ArrayList<>();
+                    result.add("(");
                     for (FuncVar t : temp) {
                         result.add("(");
                         result.addAll(t.getResult());
                         result.add(")");
                         result.add(operationBetweenResultsById);
                     }
-
                     result.remove(result.size() - 1);
+                    result.add(")");
+
                     expression.addAll(i, result);
                     for (byte j = 0; j < sizeLabelRef; j++) {
                         expression.remove(i + result.size());
@@ -427,6 +431,7 @@ public interface ReferenceService {
                             long start = Long.parseLong(countsArr[0]);
                             long end = Long.parseLong(countsArr[1]);
                             List<String> result = new ArrayList<>();
+                            result.add("(");
                             for (FuncTableCell cell : cells) {
                                 for (long j = start; j < end + 1; j++) {
                                     if(cell.getCellCount() == j){
@@ -439,6 +444,7 @@ public interface ReferenceService {
                             }
 
                             result.remove(result.size() - 1);
+                            result.add(")");
                             expression.addAll(i, result);
                             for (byte j = 0; j < sizeLabelRef; j++) {
                                 expression.remove(i + result.size());
@@ -512,6 +518,7 @@ public interface ReferenceService {
                             long start = Long.parseLong(idsArr[0]);
                             long end = Long.parseLong(idsArr[1]);
                             List<String> result = new ArrayList<>();
+                            result.add("(");
                             for (long j = start; j < end + 1; j++) {
                                 FuncTableCell tempFunc = tfcRepo.findById(j).get();
                                 result.add("(");
@@ -521,6 +528,7 @@ public interface ReferenceService {
                             }
 
                             result.remove(result.size() - 1);
+                            result.add(")");
                             expression.addAll(i, result);
                             for (byte j = 0; j < sizeLabelRef; j++) {
                                 expression.remove(i + result.size());
@@ -586,6 +594,7 @@ public interface ReferenceService {
 
                     String cellName = expression.get(i + 4).replaceAll(" ", "");
                     List<String> result = new ArrayList<>();
+                    result.add("(");
                     for (FuncTableCell cell : cells) {
                         if(cell.getCellName().equals(cellName)){
                             result.add("(");
@@ -595,7 +604,7 @@ public interface ReferenceService {
                         }
                     }
                     result.remove(result.size() - 1);
-
+                    result.add(")");
                     expression.addAll(i, result);
                     for (byte j = 0; j < sizeLabelRef; j++) {
                         expression.remove(i + result.size());

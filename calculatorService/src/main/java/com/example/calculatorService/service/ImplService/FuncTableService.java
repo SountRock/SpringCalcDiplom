@@ -480,4 +480,12 @@ public class FuncTableService implements ReferenceService {
     public FuncTableRepository getFtRepo(){
         return ftRepo;
     }
+
+    public AnaliseExpression getAnaliser() {
+        return analiser;
+    }
+
+    public void setAnaliser(AnaliseExpression analiser) {
+        this.analiser = analiser;
+    }
 }

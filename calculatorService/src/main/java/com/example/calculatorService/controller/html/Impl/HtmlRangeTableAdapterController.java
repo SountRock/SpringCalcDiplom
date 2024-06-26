@@ -6,6 +6,7 @@ import com.example.calculatorService.controller.html.HtmlDownloadControllerInter
 import com.example.calculatorService.domain.funcvar.FuncVar;
 import com.example.calculatorService.domain.table.funcTable.FuncTable;
 import com.example.calculatorService.domain.table.funcTable.FuncTableCell;
+import com.example.calculatorService.domain.table.rangeTable.Param;
 import com.example.calculatorService.domain.table.rangeTable.Range;
 import com.example.calculatorService.domain.table.rangeTable.RangeTable;
 import com.example.calculatorService.domain.table.rangeTable.ResultWithParams;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -122,6 +124,48 @@ public class HtmlRangeTableAdapterController implements HtmlDownloadControllerIn
         }
     }
 
+    @Override
+    public RangeTable getEntityForTable(RangeTable loadEntity) {
+        RangeTable temp = new RangeTable();
+        temp.setName(loadEntity.getName());
+        temp.setCreateDate(loadEntity.getCreateDate());
+        temp.setExpression(loadEntity.getExpression());
+        temp.setRangesFormula(loadEntity.getRangesFormula());
+
+        List<Range> ranges = new ArrayList<>();
+        for (Range r : loadEntity.getRanges()) {
+            Range tempRange = new Range();
+            tempRange.setName(r.getName());
+            tempRange.setStart(r.getStart());
+            tempRange.setEnd(r.getEnd());
+            tempRange.setStep(r.getStep());
+
+            ranges.add(tempRange);
+        }
+        temp.setRanges(ranges);
+
+        List<ResultWithParams> results = new ArrayList<>();
+        for (ResultWithParams r : loadEntity.getResults()) {
+            ResultWithParams tempRes = new ResultWithParams();
+            tempRes.setResult(r.getResult());
+            tempRes.setResultString(r.getResultString());
+            List<Param> params = new ArrayList<>();
+            for (Param p : r.getParams()) {
+                Param tempParam = new Param();
+                tempParam.setName(p.getName());
+                tempParam.setValue(p.getValue());
+
+                params.add(tempParam);
+            }
+            tempRes.setParams(params);
+
+            results.add(tempRes);
+        }
+        temp.setResults(results);
+
+        return temp;
+    }
+
     @PostMapping("/upload")
     public String uploadFileWithEntitiesADD(@RequestParam("file") MultipartFile file, RedirectAttributes attributes){
         if (file.isEmpty()) {
@@ -134,7 +178,7 @@ public class HtmlRangeTableAdapterController implements HtmlDownloadControllerIn
             List<RangeTable> list = List.of(mapper.readValue(file.getBytes(), RangeTable[].class));
             for (RangeTable t : list) {
                 try {
-                    controller.getRepo().save(t);
+                    controller.getRepo().save(getEntityForTable(t));
                 } catch (DataIntegrityViolationException e){}
             }
         } catch (IOException e) {}
