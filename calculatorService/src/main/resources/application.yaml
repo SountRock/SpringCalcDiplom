@@ -1,9 +1,0 @@
-server:
-  port: 8080
-spring:
-  application:
-    name: calculatorService
-links:
-  funcRepository: "http://localhost:8090/СRepo"
-  #main:
-    #allow-circular-references: true

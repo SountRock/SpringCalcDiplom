@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link th:href="@{/style.css}" rel="stylesheet"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Custom Func Repo</title>
+</head>
+<body>
+<div th:each="cFunc : ${funcs}">
+    <div class="funcHead">
+        <label th:text="'Id: ' + ${cFunc.id}"></label>
+        <label th:text="'Name: ' + ${cFunc.name}"></label>
+        <label th:text="'Type Search: ' + ${cFunc.typeSearch}"></label>
+    </div>
+    <div class="stepsList" th:each="step : ${cFunc.steps}">
+        <div class="stepsHead">
+            <label th:text="'Name: ' + ${step.name}"></label>
+            <label th:text="'Type: ' + ${step.type}"></label>
+        </div>
+        <div class="stepsValue">
+            <label th:text="'Expression: ' + ${step.expressionString}"></label>
+            <label th:text="'Default Value: ' + ${step.defaultValueString}"></label>
+        </div>
+    </div>
+    <div class="funcHead">
+        <label th:text="'Repeat Count: ' + ${cFunc.repeatCount}"></label>
+        <label class="description" th:text="'Description: ' + ${cFunc.description}"></label>
+    </div>
+    <div class="deletePanel">
+        <a th:href="@{delete-func(id=${cFunc.id})}">Delete</a>
+    </div>
+</div>
+<div class="separator"></div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{calculate-func}" method="get">
+            <label>Create Func</label>
+            <div class="edit">
+                <label>Head: </label>
+                <input type="text" name="head"/>
+            </div>
+            <div class="edit">
+                <label>Steps: </label>
+                <!--  <input type="text" name="steps"/> -->
+                <textarea type="text" name="steps"></textarea>
+            </div>
+            <div class="edit">
+                <label>repeatCount: </label>
+                <input type="text" name="repeatCount"/>
+            </div>
+            <div class="edit">
+                <label>Description: </label>
+                <input type="text" name="description"/>
+            </div>
+            <button class="button" type="submit">Create</button>
+        </form>
+    </div>
+    <div class="redactView">
+        <form th:action="@{testCF}" method="get">
+            <label>Test CF</label>
+            <div class="edit">
+                <label>Expression: </label>
+                <input type="text" name="testCF"/>
+            </div>
+            <button class="button" type="submit">Calculate</button>
+        </form>
+    </div>
+</div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{clear}" method="get">
+            <button class="button" type="submit">Clear All</button>
+        </form>
+    </div>
+</div>
+<div class="redactTable">
+    <div class="redactView">
+        <form th:action="@{download}" method="get">
+            <label>Download Table: </label>
+            <div class="edit">
+                <label>File Name: </label>
+                <input type="text" name="fileName"/>
+            </div>
+            <button class="button" type="submit">Download</button>
+        </form>
+    </div>
+    <div class="redactView">
+        <form method="post" th:action="@{upload}" enctype="multipart/form-data">
+            <label th:text="'Upload Table: ' + ${message}" th:if="${message ne null}"></label>
+            <div class="edit">
+                <input type="file" name="file" class="button">
+            </div>
+            <button type="submit" class="button">Upload</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>calculatorService</module>
-        <module>functionRepositoryService</module>
+        <module>calculatorServer</module>
+        <module>functionRepositoryServer</module>
         <module>eurekaCalcServer</module>
         <module>gatewayCalcServer</module>
     </modules>
