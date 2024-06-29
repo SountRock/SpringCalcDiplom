@@ -175,7 +175,7 @@ public class RangeTableController implements SaveDocument<RangeTable> {
     @PostMapping("saveTable/{directory}/{fileName}")
     public ResponseEntity saveTable(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
         try {
-            boolean isSave = saveDocument("calculatorService/" + directory, fileName, "RT", service.getAllTables());
+            boolean isSave = saveDocument(directory, fileName, "RT", service.getAllTables());
             if(isSave){
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
@@ -188,7 +188,7 @@ public class RangeTableController implements SaveDocument<RangeTable> {
 
     @GetMapping("loadTable/{directory}/{fileName}")
     public ResponseEntity loadTable(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
-        List<RangeTable> loadList = service.loadDocument("calculatorService/" + directory, fileName);
+        List<RangeTable> loadList = service.loadDocument(directory, fileName);
 
         if(loadList != null){
             service.loadTables(loadList);
@@ -200,7 +200,7 @@ public class RangeTableController implements SaveDocument<RangeTable> {
 
     @GetMapping("showFiles/{directory}")
     public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
-        List<String> files = showFiles("calculatorService/" + directory);
+        List<String> files = showFiles(directory);
         return new ResponseEntity<>(files, HttpStatus.OK);
     }
 

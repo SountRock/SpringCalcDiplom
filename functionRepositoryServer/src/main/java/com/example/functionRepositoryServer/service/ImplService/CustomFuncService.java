@@ -233,7 +233,7 @@ public class CustomFuncService implements ReferenceService {
         file.mkdirs();
         try {
             file = new File(directory,
-                    fileName + ".CustomFunction.json");
+                    fileName + ".CFR.json");
 
             mapper.writeValue(file, entities);
 

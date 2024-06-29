@@ -84,7 +84,7 @@ public class FuncListController implements SaveDocument<FuncVar> {
     @PostMapping("saveList/{directory}/{fileName}")
     public ResponseEntity saveList(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName) {
         try {
-            boolean isSave = saveDocument("calculatorService/" + directory, fileName, "FL", service.getHistory().getBody());
+            boolean isSave = saveDocument(directory, fileName, "FL", service.getHistory().getBody());
             if (isSave) {
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
@@ -97,7 +97,7 @@ public class FuncListController implements SaveDocument<FuncVar> {
 
     @GetMapping("loadList/{directory}/{fileName}")
     public ResponseEntity loadList(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
-        List<FuncVar> loadList = service.loadDocument("calculatorService/" + directory, fileName);
+        List<FuncVar> loadList = service.loadDocument(directory, fileName);
 
         if(loadList != null){
             service.loadFuncs(loadList);
@@ -109,7 +109,7 @@ public class FuncListController implements SaveDocument<FuncVar> {
 
     @GetMapping("showFiles/{directory}")
     public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
-        List<String> files = showFiles("calculatorService/" + directory);
+        List<String> files = showFiles(directory);
         return new ResponseEntity<>(files, HttpStatus.OK);
     }
 

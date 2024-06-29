@@ -96,7 +96,7 @@ public class FuncTableController implements SaveDocument<FuncTable> {
     @PostMapping("saveTable/{directory}/{fileName}")
     public ResponseEntity saveTable(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
         try {
-            boolean isSave = saveDocument("calculatorService/" + directory, fileName, "FT", service.getAll().getBody());
+            boolean isSave = saveDocument(directory, fileName, "FT", service.getAll().getBody());
             if(isSave){
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
@@ -109,7 +109,7 @@ public class FuncTableController implements SaveDocument<FuncTable> {
 
     @GetMapping("loadTable/{directory}/{fileName}")
     public ResponseEntity loadTable(@PathVariable("directory") String directory, @PathVariable("fileName") String fileName){
-        List<FuncTable> loadList = service.loadDocument("calculatorService/" + directory, fileName);
+        List<FuncTable> loadList = service.loadDocument(directory, fileName);
 
         if(loadList != null){
             service.loadTables(loadList);
@@ -121,7 +121,7 @@ public class FuncTableController implements SaveDocument<FuncTable> {
 
     @GetMapping("showFiles/{directory}")
     public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
-        List<String> files = showFiles("calculatorService/" + directory);
+        List<String> files = showFiles(directory);
         return new ResponseEntity<>(files, HttpStatus.OK);
     }
 
