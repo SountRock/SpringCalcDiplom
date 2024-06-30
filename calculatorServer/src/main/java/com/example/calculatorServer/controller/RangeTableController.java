@@ -97,7 +97,7 @@ public class RangeTableController implements SaveDocument<RangeTable> {
         }
     }
 
-    //ranges задаются как (пример): x=1..5,0.5&y=0.1..2&x=5..20,1;
+    //ranges задаются как (пример): x=1..5,0.5&y=0.1..2&z=5..20,1;
     @PutMapping("calculateTable/{name}/{expression}/{ranges}")
     public ResponseEntity<String> calculateTable(@PathVariable("name") String name, @PathVariable("expression") String expression, @PathVariable("ranges")String ranges){
         try {
@@ -134,7 +134,7 @@ public class RangeTableController implements SaveDocument<RangeTable> {
         }
     }
 
-    //ranges задаются как (пример): x=1..5&y=0.1..2&x=5..20:100;
+    //ranges задаются как (пример): x=1..5&y=0.1..2&z=5..20:100;
     //где 100 - сто точек в каждом диапазоне
     @PutMapping("distributionCalculateTable/{name}/{expression}/{ranges}")
     public ResponseEntity<String> distributionCalculateTable(@PathVariable("name") String name, @PathVariable("expression") String expression, @PathVariable("ranges")String ranges){
