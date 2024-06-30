@@ -5,6 +5,7 @@ import com.example.calculatorServer.repository.CustomFunctionRepository;
 import com.example.calculatorServer.repository.FuncVarRepository;
 import com.example.calculatorServer.repository.RangeTableRepository;
 import com.example.calculatorServer.service.ImplService.FuncVarService;
+import com.example.calculatorServer.service.ImplService.RangeTableService;
 import com.example.calculatorServer.service.MathModels.*;
 import com.example.calculatorServer.service.Tools.AnaliseExpression;
 import com.example.calculatorServer.service.Tools.PrepareExpression;
@@ -13,10 +14,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +38,6 @@ public class IntegrationReferencesTest {
     private CustomFunctionRepository customFuncRepo;
     @MockBean
     private RangeTableRepository tableRepo;
-
 
     @MockBean
     private PrepareExpression preparator;
@@ -103,7 +110,6 @@ public class IntegrationReferencesTest {
         /////////////////////////////////
     }
 
-    /*
     @Test
     public void UTestRefForName(){
         //Из-за особенностей содержания Анализатора Выражений установим его таким образом на сервер
@@ -144,27 +150,29 @@ public class IntegrationReferencesTest {
         service.calculateFunction(function3);
         when(baseRepo.findById(function3.getId())).thenReturn(Optional.of(function3));
         /////////////////////////////////
-
-        service.addFunc(baseRepo.findById(1L).get());
-        service.addFunc(baseRepo.findById(2L).get());
-        service.addFunc(baseRepo.findById(3L).get());
+        when(baseRepo.findByName("test")).thenReturn(
+                List.of(
+                        function,
+                        function2,
+                        function3
+                )
+        );
 
         //Ref Name Test//////////////////
         FuncVar result = new FuncVar();
         result.setId(4L);
         result.setName("result");
-        result.setExpression("name(test)");
+        result.setExpression("100+name(test)*100");
+        service.calculateFunction(result).getBody();
+        when(baseRepo.findById(result.getId())).thenReturn(Optional.of(result));
+
+        Assertions.assertEquals("20150.0", baseRepo.findById(4L).get().getResultString());
+
+        result.setExpression("100+name(test, *):100");
         service.calculateFunction(result);
         when(baseRepo.findById(result.getId())).thenReturn(Optional.of(result));
 
-        Assertions.assertEquals("200.5", baseRepo.findById(4L).get().getResultString());
-
-        result.setExpression("name(test, *)");
-        service.calculateFunction(result);
-        when(baseRepo.findById(result.getId())).thenReturn(Optional.of(result));
-
-        Assertions.assertEquals("250250.0", baseRepo.findById(4L).get().getResultString());
+        Assertions.assertEquals("2602.5", baseRepo.findById(4L).get().getResultString());
         /////////////////////////////////
     }
-     */
 }

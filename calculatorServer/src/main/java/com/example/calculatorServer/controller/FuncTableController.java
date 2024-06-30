@@ -26,6 +26,11 @@ public class FuncTableController implements SaveDocument<FuncTable> {
         return service.addNewRecord(recordName);
     }
 
+    @PostMapping("addRecordForRequestBody")
+    public ResponseEntity addFunc(@RequestBody FuncTable table){
+        return service.addRecord(table);
+    }
+
     @GetMapping("tables")
     public ResponseEntity<List<FuncTable>> getAll() {
         return service.getAll();

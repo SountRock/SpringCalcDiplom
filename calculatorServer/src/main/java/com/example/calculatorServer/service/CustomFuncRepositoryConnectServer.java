@@ -51,27 +51,6 @@ public class CustomFuncRepositoryConnectServer {
         }
     }
 
-    public ResponseEntity loadLastFunc() {
-        try{
-            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-
-            ResponseEntity<CustomFunction> response = template.exchange(funcRepositoryLink + "/last", HttpMethod.GET, entity, CustomFunction.class);
-
-            if(response.getStatusCode() == HttpStatus.OK){
-                try {
-                    customRepo.save(getEntityForTable(response.getBody()));
-                } catch (DataIntegrityViolationException e){}
-            }
-
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (ResourceAccessException e){
-            e.printStackTrace();
-
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     private CustomFunction getEntityForTable(CustomFunction loadEntity) {
         CustomFunction temp = new CustomFunction();
         temp.setName(loadEntity.getName());

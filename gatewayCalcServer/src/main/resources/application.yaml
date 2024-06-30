@@ -8,19 +8,36 @@ spring:
 cloud:
   gateway:
     routes:
-      - id: functionRepositoryService
+      - id: functionRepositoryServer
         uri: http://localhost:8090/
         predicates:
           - Path=/СRepo/**
-      - id: calculatorFuncService
+      - id: calculatorFuncServer
         uri: http://localhost:8080/
         predicates:
           - Path=/list/**
-      - id: calculatorRangeTableService
+      - id: calculatorRangeTableServer
         uri: http://localhost:8080/
         predicates:
           - Path=/RTable/**
-      - id: calculatorFuncTableService
+      - id: calculatorFuncTableServer
         uri: http://localhost:8080/
         predicates:
           - Path=/FTable/**
+
+      - id: functionRepositoryServerHTML
+        uri: http://localhost:8090/
+        predicates:
+          - Path=/customFuncRepo/**
+      - id: calculatorFuncServerHTML
+        uri: http://localhost:8080/
+        predicates:
+          - Path=/funcList/**
+      - id: calculatorRangeTableServerHTML
+        uri: http://localhost:8080/
+        predicates:
+          - Path=/rangeTable/**
+      - id: calculatorFuncTableServerHTML
+        uri: http://localhost:8080/
+        predicates:
+          - Path=/funcTable/**

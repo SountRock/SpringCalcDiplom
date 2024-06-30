@@ -53,16 +53,6 @@ public class CreateCustomFunctionController {
         return service.findAll();
     }
 
-    @GetMapping("last")
-    public ResponseEntity<CustomFunction> lastFunc(){
-        try {
-            return service.getLast();
-        } catch (NoSuchElementException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-    }
-
     @DeleteMapping("deleteById/{id}")
     public ResponseEntity deleteById(@PathVariable("id") Long id){
         return service.deleteById(id);

@@ -66,6 +66,15 @@ public class FuncTableService implements ReferenceService {
         }
     }
 
+    public ResponseEntity<FuncTable> addRecord(FuncTable record){
+        try {
+            FuncTable response = ftRepo.save(record);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (DataIntegrityViolationException e){
+            return new ResponseEntity<>(record, HttpStatus.CONFLICT);
+        }
+    }
+
     public ResponseEntity addNewCellInRecord(String recordName, String cellName, String value){
         try {
             FuncTable record = ftRepo.findByRecordName(recordName).get(0);

@@ -39,8 +39,6 @@ public class HtmlMainController {
         } else {
             model.addAttribute("responseLoad", "Failed Load Custom Func's");
         }
-        Exception e = new Exception(response.getStatusCode().toString());
-        e.printStackTrace();
 
         return "/index";
     }

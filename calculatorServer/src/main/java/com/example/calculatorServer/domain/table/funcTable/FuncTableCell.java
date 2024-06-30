@@ -20,10 +20,12 @@ public class FuncTableCell {
     private long cellCount;
 
     @Column(name="`expression`")
+    @Lob
     private String expression;
     @Column(name="`result`")
     private List<String> result;
     @Column(name="`resultString`")
+    @Lob
     private String resultString;
 
     @ManyToOne(fetch = FetchType.LAZY)

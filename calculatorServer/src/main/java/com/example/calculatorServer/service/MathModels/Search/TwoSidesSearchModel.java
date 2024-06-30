@@ -188,7 +188,8 @@ public class TwoSidesSearchModel implements Operation {
         if(inBrackets(positionIndex - 2, positionIndex + 2, expression) ||
                 isBracket(positionIndex + 1, expression) ||
                 isBracket(positionIndex - 1, expression) ||
-                isBracket(positionIndex - 2, expression)
+                isBracket(positionIndex - 2, expression) ||
+                positionIndex - 1 > -1 && positionIndex + 1 < expression.size()
         ){
             return stepIndex;
         }

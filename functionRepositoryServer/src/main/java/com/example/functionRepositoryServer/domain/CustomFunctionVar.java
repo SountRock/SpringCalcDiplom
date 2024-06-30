@@ -20,6 +20,7 @@ public class CustomFunctionVar {
     @Column(name="`expression`")
     private List<String> expression;
     @Column(name="`expressionString`")
+    @Lob
     private String expressionString;
     @Column(name="`value`")
     private List<String> value;
@@ -28,6 +29,7 @@ public class CustomFunctionVar {
     @Column(name="`defaultValue`")
     private List<String> defaultValue;
     @Column(name="`defaultValueString`")
+    @Lob
     private String defaultValueString;
 
     @Column(name="`type`")

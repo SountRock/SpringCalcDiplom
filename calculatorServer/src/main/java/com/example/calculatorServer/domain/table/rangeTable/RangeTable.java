@@ -31,6 +31,7 @@ public class RangeTable {
     ////////////////////////////////////////////////////////////////////
     @Nonnull
     @Column(name="`expression`")
+    @Lob
     private String expression;
 
     @Column(name="`ranges`")
@@ -38,6 +39,7 @@ public class RangeTable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Range> ranges;
     @Column(name="`rangesFormula`")
+    @Lob
     private String rangesFormula;
 
     @Column(name="`results`")

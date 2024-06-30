@@ -18,7 +18,7 @@ public class CustomFuncController {
     @PostMapping("/message")
     public ResponseEntity postMessage(@RequestBody String message){
         if(message.equals("ADD_NEW_C_FUNC")){
-            ResponseEntity response = connect.loadLastFunc();
+            ResponseEntity response = connect.loadCustomFunc();
             if(response.getStatusCode() == HttpStatus.OK){
                 return new ResponseEntity<>("Successful added", HttpStatus.ACCEPTED);
             } else {

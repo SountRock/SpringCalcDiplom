@@ -31,11 +31,13 @@ public class FuncVar {
     ////////////////////////////////////////////////////////////////////
     @Nonnull
     @Column(name="`expression`")
+    @Lob
     private String expression;
 
     @Column(name="`result`")
     private List<String> result;
     @Column(name="`resultString`")
+    @Lob
     private String resultString;
     ////////////////////////////////////////////////////////////////////
 

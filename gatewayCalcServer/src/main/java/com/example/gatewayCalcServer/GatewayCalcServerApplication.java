@@ -30,13 +30,22 @@ public class GatewayCalcServerApplication {
 	@Bean
 	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 		return builder.routes()
-				.route("functionRepositoryService",r->r.path("/СRepo/**")
+				.route("functionRepositoryServer",r->r.path("/СRepo/**")
 						.uri("http://localhost:8090/"))
-				.route("calculatorFuncService",r->r.path("/list/**")
+				.route("calculatorFuncServer",r->r.path("/list/**")
 						.uri("http://localhost:8080/"))
-				.route("calculatorRangeTableService",r->r.path("/RTable/**")
+				.route("calculatorRangeTableServer",r->r.path("/RTable/**")
 						.uri("http://localhost:8080/"))
-				.route("calculatorFuncTableService",r->r.path("/FTable/**")
+				.route("calculatorFuncTableServer",r->r.path("/FTable/**")
+						.uri("http://localhost:8080/"))
+
+				.route("functionRepositoryServerHTML",r->r.path("/customFuncRepo/**")
+				.uri("http://localhost:8090/"))
+				.route("calculatorFuncServerHTML",r->r.path("/funcList/**")
+						.uri("http://localhost:8080/"))
+				.route("calculatorRangeTableServerHTML",r->r.path("/rangeTable/**")
+						.uri("http://localhost:8080/"))
+				.route("calculatorFuncTableServerHTML",r->r.path("/funcTable/**")
 						.uri("http://localhost:8080/"))
 				.build();
 	}

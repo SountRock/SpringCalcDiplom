@@ -15,8 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +42,6 @@ public class CustomFuncService implements ReferenceService {
     private String calculatorServerLink;
     @Autowired
     private RestTemplate template;
-    private long lastAddedFuncId = 0;
 
 
     /**
@@ -147,7 +148,6 @@ public class CustomFuncService implements ReferenceService {
 
         try {
             customRepo.save(newFunc);
-            lastAddedFuncId = newFunc.getId();
 
             ResponseEntity response = pushMessageONCalculatorServer("ADD_NEW_C_FUNC");
             if(response.getStatusCode() == HttpStatus.ACCEPTED){
@@ -167,7 +167,7 @@ public class CustomFuncService implements ReferenceService {
             ResponseEntity<String> response = template.exchange(calculatorServerLink + "/message",HttpMethod.POST, entity, String.class);
 
             return response;
-        } catch (ResourceAccessException e){
+        } catch (ResourceAccessException | HttpClientErrorException e){
             //e.printStackTrace();
             return new ResponseEntity(HttpStatus.OK);
         }
@@ -184,10 +184,6 @@ public class CustomFuncService implements ReferenceService {
 
     public ResponseEntity<List<CustomFunction>> findAll(){
         return new ResponseEntity<>(customRepo.findAll(), HttpStatus.OK);
-    }
-
-    public ResponseEntity<CustomFunction> getLast(){
-        return new ResponseEntity<>(customRepo.findById(lastAddedFuncId).get(), HttpStatus.OK);
     }
 
     /**
