@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional
@@ -38,7 +39,7 @@ public class CustomFuncService implements ReferenceService {
     @Autowired
     private PrepareExpression preparator;
 
-    @Value("${links.calculatorServer}")
+    @Value("${links.calculatorServerLink}")
     private String calculatorServerLink;
     @Autowired
     private RestTemplate template;
@@ -149,7 +150,7 @@ public class CustomFuncService implements ReferenceService {
         try {
             customRepo.save(newFunc);
 
-            ResponseEntity response = pushMessageONCalculatorServer("ADD_NEW_C_FUNC");
+            ResponseEntity response = pushMessageONCalculatorServer();
             if(response.getStatusCode() == HttpStatus.ACCEPTED){
                 return new ResponseEntity<>(newFunc.toString(), HttpStatus.OK);
             } else {
@@ -161,10 +162,10 @@ public class CustomFuncService implements ReferenceService {
         }
     }
 
-    public ResponseEntity pushMessageONCalculatorServer(String message){
+    public ResponseEntity pushMessageONCalculatorServer(){
         try{
-            HttpEntity<String> entity = new HttpEntity<>(new String(message));
-            ResponseEntity<String> response = template.exchange(calculatorServerLink + "/message",HttpMethod.POST, entity, String.class);
+            HttpEntity<String> entity = new HttpEntity<>(new String());
+            ResponseEntity<String> response = template.exchange(calculatorServerLink + "/loadLib", HttpMethod.GET, entity, String.class);
 
             return response;
         } catch (ResourceAccessException | HttpClientErrorException e){

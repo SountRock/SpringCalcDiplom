@@ -152,8 +152,9 @@ public class HtmlCustomFuncAdapterController implements HtmlDownloadControllerIn
                     controller.getRepo().save(getEntityForTable(f));
                 } catch (DataIntegrityViolationException | IllegalStateException e){}
             }
-        } catch (IOException e) {}
 
+            controller.pushMessageONCalculatorServer();
+        } catch (IOException e) {}
         attributes.addFlashAttribute("message", "Successfully uploaded " + file.getName() + '!');
 
         return "redirect:list";

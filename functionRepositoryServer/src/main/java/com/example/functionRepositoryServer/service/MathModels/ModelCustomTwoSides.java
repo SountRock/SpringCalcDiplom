@@ -52,9 +52,6 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements CustomOp
                 innerVars.get(i).setWorkExpression(temp2);
             }
 
-            Exception ee = new Exception(innerVars.toString());
-            ee.printStackTrace();
-
             long count = 1;
             boolean isFind = false;
             String repeatCount = cFunc.getRepeatCount();

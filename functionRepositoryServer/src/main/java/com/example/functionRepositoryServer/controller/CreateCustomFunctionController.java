@@ -6,6 +6,7 @@ import com.example.functionRepositoryServer.service.ImplService.CustomFuncServic
 import com.example.functionRepositoryServer.service.Tools.PrepareExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -93,6 +94,10 @@ public class CreateCustomFunctionController {
     public ResponseEntity<List<String>> showFilesInDirectory(@PathVariable("directory") String directory){
         List<String> files = service.showFiles("functionRepositoryService/" + directory);
         return new ResponseEntity<>(files, HttpStatus.OK);
+    }
+
+    public ResponseEntity pushMessageONCalculatorServer(){
+        return service.pushMessageONCalculatorServer();
     }
 
     public CustomFunctionRepository getRepo(){

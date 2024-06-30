@@ -13,6 +13,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -43,7 +44,7 @@ public class CustomFuncRepositoryConnectServer {
                 }
             }
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (ResourceAccessException e){
             e.printStackTrace();
 

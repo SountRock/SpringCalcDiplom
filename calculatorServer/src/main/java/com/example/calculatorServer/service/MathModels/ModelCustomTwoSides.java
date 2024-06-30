@@ -1,17 +1,13 @@
 package com.example.calculatorServer.service.MathModels;
 
+
+
 import com.example.calculatorServer.domain.customFunc.CustomFunction;
 import com.example.calculatorServer.domain.customFunc.CustomFunctionVar;
 import com.example.calculatorServer.domain.customFunc.TypeVar;
-import com.example.calculatorServer.repository.CustomFunctionRepository;
-import com.example.calculatorServer.repository.FuncVarRepository;
-import com.example.calculatorServer.repository.RangeTableRepository;
 import com.example.calculatorServer.service.MathModels.Search.TwoSidesSearchModel;
-import com.example.calculatorServer.service.ReferenceService;
 import com.example.calculatorServer.service.Tools.AnaliseExpression;
-import com.example.calculatorServer.service.Tools.PrepareExpression;
 
-import java.beans.Expression;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,3 +94,4 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements CustomOp
         }
     }
 }
+
