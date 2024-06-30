@@ -32,7 +32,10 @@ public class CreateCustomFunctionController {
     @PostMapping("create/{head}/{steps}/{description}")
     public ResponseEntity addCustomFunc(@PathVariable("head") String head, @PathVariable("steps") String steps, @PathVariable("description") String description){
         try {
-            return service.createCustomFunc(head, steps, description);
+            ResponseEntity response = service.createCustomFunc(head, steps, description);
+            service.pushMessageONCalculatorServer(); //Для подстарховки
+
+            return response;
         } catch (UnexpectedRollbackException e){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
