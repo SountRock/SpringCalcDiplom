@@ -27,9 +27,9 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements CustomOp
             List<String> leftArguments = searchLeftArguments(expression, positionIndex);
             List<String> rightArguments = searchRightArguments(expression, positionIndex);
             int startPosition = leftArguments.size() > 1 ?
-                    positionIndex - leftArguments.size()/2 - 2 : positionIndex - 1;
+                    positionIndex - leftArguments.size() - 2 : positionIndex - 1;
             int endPosition = rightArguments.size() > 1 ?
-                    positionIndex + rightArguments.size()/2 + 3 : positionIndex + 2;
+                    positionIndex + rightArguments.size() + 3 : positionIndex + 2;
 
             List<CustomFunctionVar> inputVars = cFunc.getSteps().stream().filter(v -> v.getType() == TypeVar.INPUT).toList();
             List<CustomFunctionVar> innerVars = cFunc.getSteps().stream().filter(v -> v.getType() == TypeVar.INNER).toList();

@@ -42,16 +42,14 @@ public class TwoSidesSearchModel implements Operation {
     public List<String> searchLeftArguments(List<String> expr, int positionIndex) {
         try {
             List<String> argLeft = new ArrayList<>();
-            List<String> arguments = new ArrayList<>();
             if (!expr.get(positionIndex - 1).equals(")")) {
                 argLeft.add(expr.get(positionIndex - 1));
             } else {
                 argLeft = compareLeft(expr, positionIndex - 1);
-                arguments.addAll(argLeft);
+                //arguments.addAll(argLeft);
             }
-            arguments.addAll(argLeft);
 
-            return arguments;
+            return argLeft;
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             return new ArrayList<>();
         }
@@ -93,16 +91,14 @@ public class TwoSidesSearchModel implements Operation {
     public List<String> searchRightArguments(List<String> expr, int positionIndex) {
         try {
             List<String> argRight = new ArrayList<>();
-            List<String> arguments = new ArrayList<>();
             if (!expr.get(positionIndex + 1).equals("(")) {
                 argRight.add(expr.get(positionIndex + 1));
             } else {
                 argRight = compareRight(expr, positionIndex + 1);
-                arguments.addAll(argRight);
+                //arguments.addAll(argRight);
             }
-            arguments.addAll(argRight);
 
-            return arguments;
+            return argRight;
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             return new ArrayList<>();
         }
