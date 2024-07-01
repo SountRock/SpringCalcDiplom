@@ -150,13 +150,7 @@ public class CustomFuncService implements ReferenceService {
         try {
             customRepo.save(newFunc);
 
-            ResponseEntity response = pushMessageONCalculatorServer();
-            if(response.getStatusCode() == HttpStatus.ACCEPTED){
-                return new ResponseEntity<>(newFunc.toString(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(newFunc + "[NOT PUSH ON CALCULATE SERVER]",
-                        response.getStatusCode());
-            }
+            return new ResponseEntity<>(newFunc.toString(), HttpStatus.OK);
         } catch (DataIntegrityViolationException | NullPointerException e){
             return new ResponseEntity<>("This Custom Function name already exists", HttpStatus.CONFLICT);
         }

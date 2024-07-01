@@ -33,9 +33,13 @@ public class CreateCustomFunctionController {
     public ResponseEntity addCustomFunc(@PathVariable("head") String head, @PathVariable("steps") String steps, @PathVariable("description") String description){
         try {
             ResponseEntity response = service.createCustomFunc(head, steps, description);
-            service.pushMessageONCalculatorServer(); //Для подстарховки
-
-            return response;
+            ResponseEntity responsePush = service.pushMessageONCalculatorServer();
+            if(responsePush.getStatusCode() == HttpStatus.ACCEPTED){
+                return response;
+            } else {
+                return new ResponseEntity<>(response.getBody() + "[NOT PUSH ON CALCULATE SERVER]",
+                        response.getStatusCode());
+            }
         } catch (UnexpectedRollbackException e){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
