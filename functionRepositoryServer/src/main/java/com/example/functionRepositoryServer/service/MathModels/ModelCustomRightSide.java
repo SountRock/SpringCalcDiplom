@@ -34,9 +34,6 @@ public class ModelCustomRightSide extends RightSideSearchModel implements Refere
             for (int i = 0; i < arguments.size(); i++) {
                 List<String> temp = PrepareExpression.decompose(arguments.get(i));
 
-                //temp = findRangeTableReferencesById(temp, tableRepo);
-                //temp = findRangeTableReferencesByName(temp, tableRepo);
-                //temp = calculateRangeTableReferences(temp, tableRepo, analizer);
                 temp = analizer.analise(temp);
                 inputVars.get(i).setValue(temp);
             }
@@ -71,7 +68,6 @@ public class ModelCustomRightSide extends RightSideSearchModel implements Refere
             while (i < count) {
                 for (int j = 0; j < innerVars.size(); j++) {
                     //Заполняем ссылки на предыдущие шаги переменные в внутрених.
-                    //List<String> result = findPreviousStepsReferences(innerVars, innerVars.get(j));
                     List<String> result = findStepsReferences(innerVars, innerVars.get(j).getWorkExpression());
 
                     result = analizer.analise(result);

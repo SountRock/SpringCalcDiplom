@@ -1,44 +1,27 @@
 package com.example.calculatorServer.controller.html.Impl;
 
 import com.example.calculatorServer.controller.FuncTableController;
-import com.example.calculatorServer.controller.html.HtmlDownloadControllerInterface;
-import com.example.calculatorServer.domain.funcvar.FuncVar;
+import com.example.calculatorServer.controller.html.HtmlDownloadNUploadControllerInterface;
 import com.example.calculatorServer.domain.table.funcTable.FuncTable;
 import com.example.calculatorServer.domain.table.funcTable.FuncTableCell;
-import com.example.calculatorServer.domain.table.rangeTable.RangeTable;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("funcTable")
-public class HtmlFuncTableAdapterController implements HtmlDownloadControllerInterface<FuncTable> {
+public class HtmlFuncTableAdapterController implements HtmlDownloadNUploadControllerInterface<FuncTable> {
     @Autowired
     private FuncTableController controller;
 
@@ -64,19 +47,6 @@ public class HtmlFuncTableAdapterController implements HtmlDownloadControllerInt
 
         return "redirect:table";
     }
-
-    /*
-    @GetMapping("/delete-cell")
-    public String deleteCell(@RequestParam(name = "recordName") String recordName,
-                                @RequestParam(name = "cellCount") String cellCount) {
-        try {
-            long count = Long.parseLong(cellCount);
-            controller.deleteCell(recordName, count);
-        } catch (NumberFormatException e){}
-
-        return "redirect:table";
-    }
-     */
 
     @GetMapping("/delete-cell")
     public String deleteCell(@RequestParam("idRecord") String idRecord,

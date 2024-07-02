@@ -4,7 +4,6 @@ import com.example.calculatorServer.domain.table.rangeTable.Range;
 import com.example.calculatorServer.domain.table.rangeTable.RangeTable;
 import com.example.calculatorServer.repository.RangeTableRepository;
 import com.example.calculatorServer.service.ImplService.RangeTableService;
-import com.example.calculatorServer.service.SaveDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

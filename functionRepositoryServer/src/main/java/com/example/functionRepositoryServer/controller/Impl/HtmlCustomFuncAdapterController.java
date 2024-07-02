@@ -1,7 +1,7 @@
 package com.example.functionRepositoryServer.controller.Impl;
 
 import com.example.functionRepositoryServer.controller.CreateCustomFunctionController;
-import com.example.functionRepositoryServer.controller.HtmlDownloadControllerInterface;
+import com.example.functionRepositoryServer.controller.HtmlDownloadNUploadControllerInterface;
 import com.example.functionRepositoryServer.domain.CustomFunction;
 import com.example.functionRepositoryServer.domain.CustomFunctionVar;
 import com.example.functionRepositoryServer.service.Tools.PrepareExpression;
@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("customFuncRepo")
-public class HtmlCustomFuncAdapterController implements HtmlDownloadControllerInterface<CustomFunction> {
+public class HtmlCustomFuncAdapterController implements HtmlDownloadNUploadControllerInterface<CustomFunction> {
     @Autowired
     private CreateCustomFunctionController controller;
 
@@ -43,8 +43,8 @@ public class HtmlCustomFuncAdapterController implements HtmlDownloadControllerIn
         return "customFuncList";
     }
 
-    @GetMapping("/calculate-func")
-    public String calculateFunc(@RequestParam(name = "head") String head,
+    @GetMapping("/create-func")
+    public String createFunc(@RequestParam(name = "head") String head,
                                 @RequestParam(name = "steps") String steps,
                                 @RequestParam(name = "repeatCount") String repeatCount,
                                 @RequestParam(name = "description") String description) {

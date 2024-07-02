@@ -15,6 +15,9 @@ import com.example.calculatorServer.service.Tools.PrepareExpression;
 
 import java.util.*;
 
+/**
+ * Интерфейс для нахождения ссылок в выражениях
+ */
 public interface ReferenceService {
     /**
      * Найти ссылки на другие функции.
@@ -49,6 +52,8 @@ public interface ReferenceService {
                         try {
                             long start = Long.parseLong(idsArr[0]);
                             long end = Long.parseLong(idsArr[1]);
+
+                            //Если инексы указаны верно, то сибираем значения по найденым ссылкам и объединяем их
                             List<String> result = new ArrayList<>();
                             result.add("(");
                             for (long j = start; j < end + 1; j++) {
@@ -61,6 +66,7 @@ public interface ReferenceService {
                             result.remove(result.size() - 1);
                             result.add(")");
 
+                            //Добавляеим итоговый результа и удаляем следы ссылки
                             expression.addAll(i, result);
                             for (byte j = 0; j < sizeLabelRef; j++) {
                                 expression.remove(i + result.size());
@@ -128,6 +134,7 @@ public interface ReferenceService {
                         throw new NoSuchElementException();
                     }
 
+                    //Если нашли, то подставляем и объединяем результаты
                     List<String> result = new ArrayList<>();
                     result.add("(");
                     for (FuncVar t : temp) {
@@ -139,6 +146,7 @@ public interface ReferenceService {
                     result.remove(result.size() - 1);
                     result.add(")");
 
+                    //Добавляем результат и удаляем следы ссылки
                     expression.addAll(i, result);
                     for (byte j = 0; j < sizeLabelRef; j++) {
                         expression.remove(i + result.size());
@@ -181,8 +189,11 @@ public interface ReferenceService {
                     if(temp.size() < 1){
                         throw new NoSuchElementException();
                     }
+
+                    //Если нашли, то получаем результат
                     List<String> result = temp.get(0).getResults().get(stringNumber).getResult();
 
+                    //Добавляем результат и удаляем следы ссылки
                     expression.addAll(i, result);
                     for (byte j = 0; j < 6; j++) {
                         expression.remove(i + result.size());
@@ -228,6 +239,7 @@ public interface ReferenceService {
                     RangeTable temp = tableRepo.findById(id).get();
                     List<String> result = temp.getResults().get(stringNumber).getResult();
 
+                    //Добавляем результат и удаляем следы ссылки
                     expression.addAll(i, result);
                     for (byte j = 0; j < 6; j++) {
                         expression.remove(i + result.size());
@@ -337,7 +349,7 @@ public interface ReferenceService {
     }
 
     /**
-     * Собрать аргументы по индексу начала поиска и конца поиска
+     * Собрать аргументы по индексу начала поиска и конца поиска для комманды tcalc (в формате: param_name1=value1&param_name2=value2...)
      * @param expression
      * @param startIndex
      * @param endValue
@@ -367,12 +379,17 @@ public interface ReferenceService {
      */
     default List<String> findNCalculateCustomFunc(List<String> expression, CustomFunctionRepository customRepo, AnaliseExpression analiser) {
         try {
+            //Получаем все макросы с репозитория
             List<CustomFunction> funcs = customRepo.findAll();
 
+            //Проходямся по ним
             for (CustomFunction c : funcs) {
                 for (int i = 0; i < expression.size(); i++) {
+                    //и ищем ссылки на них в выражении
                     if (expression.get(i).equals(c.getName())){
+                        //Если нашли то определяем тип найденой функции
                         switch (c.getTypeSearch()){
+                            //Определив тип проивзводим расчет по нужному нам шаблону
                             case TWO_SIDES:
                                 ModelCustomTwoSides model1 = new ModelCustomTwoSides(c);
                                 i = model1.operation(expression, i, analiser);
@@ -445,6 +462,8 @@ public interface ReferenceService {
 
                             result.remove(result.size() - 1);
                             result.add(")");
+
+                            //Добавляем результат в выражение и удалялем следы ссылки
                             expression.addAll(i, result);
                             for (byte j = 0; j < sizeLabelRef; j++) {
                                 expression.remove(i + result.size());
@@ -456,13 +475,17 @@ public interface ReferenceService {
                     } else {
                         long countCell = Long.parseLong(counts);
                         List<String> resultByCount = null;
+
+                        //Ищем ссылку
                         for (int j = 0; j < cells.size(); j++) {
                             if(cells.get(j).getCellCount() == countCell){
                                 resultByCount = cells.get(j).getResult();
                                 j = cells.size();
                             }
                         }
+                        //Если ссылка найдена
                         if(resultByCount != null){
+                            //Добавляем результат в выражение и удалялем следы ссылки
                             expression.addAll(i, resultByCount);
                             for (byte j = 0; j < 6; j++) {
                                 expression.remove(i + resultByCount.size());
@@ -486,9 +509,9 @@ public interface ReferenceService {
 
     /**
      * Найти ссылки на другие функции по номеру ячейки.
-     * Синтаксис1: ref(id);
-     * Синтаксис2.1: ref(с_id..по_id);
-     * Синтаксис2.2: ref(с_id..по_id, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (2.1);
+     * Синтаксис1: ftref(id);
+     * Синтаксис2.1: ftref(с_id..по_id);
+     * Синтаксис2.2: ftref(с_id..по_id, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (2.1);
      * @param expression
      * @return
      */
@@ -498,7 +521,7 @@ public interface ReferenceService {
         }
         //вставка результата другого выражения по id
         for (int i = 0; i < expression.size(); i++) {
-            if(expression.get(i).equals("ref")){
+            if(expression.get(i).equals("ftref")){
                 try {
                     String ids = expression.get(i + 2).replaceAll(" ", "");
                     //Когда мы хотим получить несколько результатов по id и както их объединить
@@ -529,6 +552,8 @@ public interface ReferenceService {
 
                             result.remove(result.size() - 1);
                             result.add(")");
+
+                            //Добавляем результат в выражение и удалялем следы ссылки
                             expression.addAll(i, result);
                             for (byte j = 0; j < sizeLabelRef; j++) {
                                 expression.remove(i + result.size());
@@ -540,9 +565,11 @@ public interface ReferenceService {
                     } else {
                         long idFunc = Long.parseLong(ids);
 
+                        //Ищем ссылку
                         FuncTableCell temp = tfcRepo.findById(idFunc).get();
                         List<String> resultById = temp.getResult();
                         if(resultById != null){
+                            //Добавляем результат в выражение и удалялем следы ссылки
                             expression.remove(i + 2);
                             expression.remove(i);
                             expression.addAll(i + 1, resultById);
@@ -565,9 +592,9 @@ public interface ReferenceService {
 
     /**
      * Найти ссылки на другие функции по имени.
-     * Синтаксис1: name(имя_записи, имя_ячеек). Если только одна переменная имеет такое имя, то вернется ее значение.
+     * Синтаксис1: ftname(имя_записи, имя_ячеек). Если только одна переменная имеет такое имя, то вернется ее значение.
      * Если несколько то вернеться их объединение.
-     * Синтаксис2: name(имя_записи, имя_ячеек, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (1);
+     * Синтаксис2: ftname(имя_записи, имя_ячеек, операция_объединения) операция_объединения может быть к примеру умножением (*), по умолчанию сложение (1);
      * @param expression
      * @return
      */
@@ -577,7 +604,7 @@ public interface ReferenceService {
         }
         //вставка результата другого выражения по cellName
         for (int i = 0; i < expression.size(); i++) {
-            if (expression.get(i).equals("name")) {
+            if (expression.get(i).equals("ftname")) {
                 try {
                     String recordName = expression.get(i + 2).replaceAll(" ", "");
                     FuncTable record = tfRepo.findByRecordName(recordName).get(0);
@@ -594,6 +621,8 @@ public interface ReferenceService {
 
                     String cellName = expression.get(i + 4).replaceAll(" ", "");
                     List<String> result = new ArrayList<>();
+
+                    //Ищем ссылки и собираем результаты
                     result.add("(");
                     for (FuncTableCell cell : cells) {
                         if(cell.getCellName().equals(cellName)){
@@ -605,6 +634,8 @@ public interface ReferenceService {
                     }
                     result.remove(result.size() - 1);
                     result.add(")");
+
+                    //Добавляем результат в выражение и удалялем следы ссылки
                     expression.addAll(i, result);
                     for (byte j = 0; j < sizeLabelRef; j++) {
                         expression.remove(i + result.size());

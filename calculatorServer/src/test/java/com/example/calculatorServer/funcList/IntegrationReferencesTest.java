@@ -46,7 +46,7 @@ public class IntegrationReferencesTest {
     private FuncVarService service;
 
     @Test
-    public void UTestRef(){
+    public void ITestRef(){
         //Из-за особенностей содержания Анализатора Выражений установим его таким образом на сервер
         AnaliseExpression analiser = new AnaliseExpression(
                 List.of(
@@ -111,7 +111,7 @@ public class IntegrationReferencesTest {
     }
 
     @Test
-    public void UTestRefForName(){
+    public void ITestRefForName(){
         //Из-за особенностей содержания Анализатора Выражений установим его таким образом на сервер
         AnaliseExpression analiser = new AnaliseExpression(
                 List.of(

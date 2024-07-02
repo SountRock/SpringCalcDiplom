@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public interface HtmlDownloadControllerInterface<T> {
+public interface HtmlDownloadNUploadControllerInterface<T> {
     /**
      * Скачать файл
      * @param fileName

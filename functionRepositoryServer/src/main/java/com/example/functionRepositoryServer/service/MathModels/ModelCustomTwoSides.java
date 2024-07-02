@@ -69,7 +69,6 @@ public class ModelCustomTwoSides extends TwoSidesSearchModel implements CustomOp
             while (i < count) {
                 for (int j = 0; j < innerVars.size(); j++) {
                     //Заполняем ссылки на предыдущие шаги переменные в внутрених.
-                    //List<String> result = findPreviousStepsReferences(innerVars, innerVars.get(j));
                     List<String> result = findStepsReferences(innerVars, innerVars.get(j).getWorkExpression());
 
                     result = analizer.analise(result);

@@ -13,20 +13,6 @@ public class GatewayCalcServerApplication {
 		SpringApplication.run(GatewayCalcServerApplication.class, args);
 	}
 
-	/*
-	      - id: functionRepositoryService
-        uri: http://localhost:8090/
-        predicates:
-          - Path=/СRepo/**
-      - id: calculatorFuncService
-        uri: http://localhost:8080/
-        predicates:
-          - Path=/test/**
-      - id: calculatorRangeTableService
-        uri: http://localhost:8080/
-        predicates:
-          - Path=/tTable/**
-	 */
 	@Bean
 	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 		return builder.routes()

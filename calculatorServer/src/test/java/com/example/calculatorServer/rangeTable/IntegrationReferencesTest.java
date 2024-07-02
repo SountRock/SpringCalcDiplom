@@ -23,6 +23,9 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
+/**
+ * В этом тесте мы полверям работу ссылок на расчеты в
+ */
 @SpringBootTest
 public class IntegrationReferencesTest {
     @MockBean
@@ -49,7 +52,7 @@ public class IntegrationReferencesTest {
     private FuncTableService funcTableService;
 
     @Test
-    public void UTestRefForId(){
+    public void ITestRefForId(){
         //Из-за особенностей содержания Анализатора Выражений установим его таким образом на сервер
         AnaliseExpression analiser = new AnaliseExpression(
                 List.of(
@@ -112,7 +115,7 @@ public class IntegrationReferencesTest {
     }
 
     @Test
-    public void UTestRefForNameForFuncList(){
+    public void ITestRefForNameForFuncList(){
         //Из-за особенностей содержания Анализатора Выражений установим его таким образом на сервер
         AnaliseExpression analiser = new AnaliseExpression(
                 List.of(
@@ -182,7 +185,78 @@ public class IntegrationReferencesTest {
     }
 
     @Test
-    public void UTestRefForNameForFuncTable(){
+    public void ITestRefForIDForFuncTable(){
+        //Из-за особенностей содержания Анализатора Выражений установим его таким образом на сервер
+        AnaliseExpression analiser = new AnaliseExpression(
+                List.of(
+                        new ModelFactorial(),
+                        new ModelSquare(),
+                        new ModelDivitev2(),
+                        new ModelMultiplyv2(),
+                        new ModelMinusv2(),
+                        new ModelPlusv2()
+                )
+        );
+        service.setAnaliser(analiser);
+        Assertions.assertEquals(analiser, service.getAnaliser());
+
+        /////////////////////////////////////////////////////////
+        RangeTable table = new RangeTable();
+        table.setId(1L);
+        table.setName("table_1");
+        table.setExpression("x+y");
+        ////////////////////
+        Range x = new Range();
+        x.setName("x");
+        x.setStart(1.0);
+        x.setEnd(4.0);
+        x.setStep(1.0);
+
+        Range y = new Range();
+        y.setName("y");
+        y.setStart(1.0);
+        y.setEnd(8.0);
+        y.setStep(2.0);
+
+        List<Range> ranges = new ArrayList<>();
+        ranges.add(x);
+        ranges.add(y);
+        ////////////////////
+        service.calculateTable(table, ranges);
+        when(baseRepo.findById(table.getId())).thenReturn(Optional.of(table));
+        /////////////////////////////////////////////////////////
+
+        when(baseRepo.findByName("table_1")).thenReturn(
+                List.of(
+                        table
+                )
+        );
+
+        FuncTableCell result = new FuncTableCell();
+        result.setId(4L);
+        result.setCellName("Result");
+        result.setCellCount(1);
+        result.setExpression("tref(1, 3) + 100");
+        funcTableService.calculateCellInRecord("Result", result);
+        when(ftcRepo.findById(result.getId())).thenReturn(Optional.of(result));
+
+        Assertions.assertEquals("108.0", funcTableService.findCellById(4L).getBody().getResultString());
+
+        result.setExpression("tref(1, 5) + 100");
+        funcTableService.calculateCellInRecord("Result", result);
+        when(ftcRepo.findById(result.getId())).thenReturn(Optional.of(result));
+
+        Assertions.assertEquals("112.0", funcTableService.findCellById(4L).getBody().getResultString());
+
+        result.setExpression("tcalc(table_1, x=22&y=50) + 100");
+        funcTableService.calculateCellInRecord("Result", result);
+        when(ftcRepo.findById(result.getId())).thenReturn(Optional.of(result));
+
+        Assertions.assertEquals("172.0", funcTableService.findCellById(4L).getBody().getResultString());
+    }
+
+    @Test
+    public void ITestRefForNameForFuncTable(){
         //Из-за особенностей содержания Анализатора Выражений установим его таким образом на сервер
         AnaliseExpression analiser = new AnaliseExpression(
                 List.of(

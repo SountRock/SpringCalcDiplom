@@ -22,6 +22,9 @@ import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 
+/**
+ * Данный тест проверяет верность расчета выражений
+ */
 @ExtendWith(MockitoExtension.class)
 public class UnitCalculateTest {
     @Mock

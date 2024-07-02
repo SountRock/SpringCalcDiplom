@@ -1,11 +1,7 @@
 package com.example.calculatorServer.controller.html.Impl;
 
-import com.example.calculatorServer.controller.FuncTableController;
 import com.example.calculatorServer.controller.RangeTableController;
-import com.example.calculatorServer.controller.html.HtmlDownloadControllerInterface;
-import com.example.calculatorServer.domain.funcvar.FuncVar;
-import com.example.calculatorServer.domain.table.funcTable.FuncTable;
-import com.example.calculatorServer.domain.table.funcTable.FuncTableCell;
+import com.example.calculatorServer.controller.html.HtmlDownloadNUploadControllerInterface;
 import com.example.calculatorServer.domain.table.rangeTable.Param;
 import com.example.calculatorServer.domain.table.rangeTable.Range;
 import com.example.calculatorServer.domain.table.rangeTable.RangeTable;
@@ -27,7 +23,7 @@ import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("rangeTable")
-public class HtmlRangeTableAdapterController implements HtmlDownloadControllerInterface<RangeTable> {
+public class HtmlRangeTableAdapterController implements HtmlDownloadNUploadControllerInterface<RangeTable> {
     @Autowired
     private RangeTableController controller;
 

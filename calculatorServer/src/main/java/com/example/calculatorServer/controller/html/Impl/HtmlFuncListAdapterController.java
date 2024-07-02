@@ -1,11 +1,9 @@
 package com.example.calculatorServer.controller.html.Impl;
 
 import com.example.calculatorServer.controller.FuncListController;
-import com.example.calculatorServer.controller.html.HtmlDownloadControllerInterface;
+import com.example.calculatorServer.controller.html.HtmlDownloadNUploadControllerInterface;
 import com.example.calculatorServer.domain.funcvar.FuncVar;
-import com.example.calculatorServer.domain.table.funcTable.FuncTable;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,13 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("funcList")
-public class HtmlFuncListAdapterController implements HtmlDownloadControllerInterface<FuncVar> {
+public class HtmlFuncListAdapterController implements HtmlDownloadNUploadControllerInterface<FuncVar> {
     @Autowired
     private FuncListController controller;
 

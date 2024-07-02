@@ -1,17 +1,17 @@
-package com.example.calculatorServer.service;
+package com.example.calculatorServer.controller;
 
-import com.example.calculatorServer.domain.funcvar.FuncVar;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Интерфейс для сохранения БД
+ * @param <T>
+ */
 public interface SaveDocument<T> {
-
     /**
      * Сохранить сущности
      * @param directory

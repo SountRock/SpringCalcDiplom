@@ -2,15 +2,14 @@ package com.example.calculatorServer.service.ImplService;
 
 import com.example.calculatorServer.domain.funcvar.FuncVar;
 import com.example.calculatorServer.domain.table.funcTable.FuncTable;
+import com.example.calculatorServer.domain.table.funcTable.FuncTableCell;
 import com.example.calculatorServer.domain.table.rangeTable.Param;
 import com.example.calculatorServer.domain.table.rangeTable.Range;
 import com.example.calculatorServer.domain.table.rangeTable.RangeTable;
 import com.example.calculatorServer.domain.table.rangeTable.ResultWithParams;
 import com.example.calculatorServer.exceptions.ReferenceResultIsEmpty;
 import com.example.calculatorServer.exceptions.TableReferenceErrorException;
-import com.example.calculatorServer.repository.CustomFunctionRepository;
-import com.example.calculatorServer.repository.FuncVarRepository;
-import com.example.calculatorServer.repository.RangeTableRepository;
+import com.example.calculatorServer.repository.*;
 import com.example.calculatorServer.service.ReferenceService;
 import com.example.calculatorServer.service.Tools.AnaliseExpression;
 import com.example.calculatorServer.service.Tools.PrepareExpression;
@@ -37,6 +36,8 @@ public class RangeTableService implements ReferenceService {
     @Autowired
     private RangeTableRepository tableRepo;
     private FuncVarRepository funcRepo;
+    private FuncTableRepository ftRepo;
+    private FuncTableCellRepository ftcRepo;
     private CustomFunctionRepository customRepo;
 
     @Autowired
@@ -45,8 +46,17 @@ public class RangeTableService implements ReferenceService {
     private PrepareExpression preparator;
 
     @Autowired
-    public void setTableRepo(@Lazy FuncVarRepository funcRepo) {
+    public void setFuncRepo(@Lazy FuncVarRepository funcRepo) {
         this.funcRepo = funcRepo;
+    }
+    @Autowired
+    public void setFTRepo(@Lazy FuncTableRepository ftRepo) {
+        this.ftRepo = ftRepo;
+    }
+
+    @Autowired
+    public void setFTCRepo(@Lazy FuncTableCellRepository ftcRepo) {
+        this.ftcRepo = ftcRepo;
     }
 
     @Autowired
@@ -141,6 +151,11 @@ public class RangeTableService implements ReferenceService {
                 //Проверям наличие ссылок с FuncVar
                 prepareExpression = findFuncVarReferencesById(prepareExpression, funcRepo);
                 prepareExpression = findFuncVarReferencesByName(prepareExpression, funcRepo);
+
+                //Проверям наличие ссылок с FuncTable
+                prepareExpression = findFuncTableReferencesByCount(prepareExpression, ftRepo);
+                prepareExpression = findFuncTableReferencesById(prepareExpression, ftcRepo);
+                prepareExpression = findFuncTableReferencesByName(prepareExpression, ftRepo);
 
                 //Проверям наличие ссылок с RangeTable
                 prepareExpression = findRangeTableReferencesById(prepareExpression, tableRepo);
@@ -274,6 +289,11 @@ public class RangeTableService implements ReferenceService {
                 //Проверям наличие ссылок с FuncVar
                 prepareExpression = findFuncVarReferencesById(prepareExpression, funcRepo);
                 prepareExpression = findFuncVarReferencesByName(prepareExpression, funcRepo);
+
+                //Проверям наличие ссылок с FuncTable
+                prepareExpression = findFuncTableReferencesByCount(prepareExpression, ftRepo);
+                prepareExpression = findFuncTableReferencesById(prepareExpression, ftcRepo);
+                prepareExpression = findFuncTableReferencesByName(prepareExpression, ftRepo);
 
                 //Проверям наличие ссылок с RangeTable
                 prepareExpression = findRangeTableReferencesById(prepareExpression, tableRepo);

@@ -5,6 +5,9 @@ import com.example.functionRepositoryServer.domain.CustomFunctionVar;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Интефрейс для поиска ссылок на другие шаги внутри шагов Custom Function
+ */
 public interface CustomOperation {
 
     default List<String> findStepsReferences(List<CustomFunctionVar> steps, List<String> expression){

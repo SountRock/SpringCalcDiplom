@@ -102,15 +102,6 @@ public class CustomFuncService implements ReferenceService {
             try {
                 String count = stepsNCountSplit[1];
                 newFunc.setRepeatCount(count);
-                /*
-                boolean isFind = false;
-                for (int j = 0; !isFind && j < vars.size(); j++) {
-                    if(count.equals(vars.get(j).getName())){
-                        newFunc.setRepeatCount(count);
-                        isFind = true;
-                    }
-                }
-                 */
             } catch (ArrayIndexOutOfBoundsException e){
                 newFunc.setRepeatCount("1");
             }
@@ -156,6 +147,10 @@ public class CustomFuncService implements ReferenceService {
         }
     }
 
+    /**
+     * Метод для оправки запроса на загрузки библиотеки на вычислительныый сервер
+     * @return
+     */
     public ResponseEntity pushMessageONCalculatorServer(){
         try{
             HttpEntity<String> entity = new HttpEntity<>(new String());
@@ -278,13 +273,5 @@ public class CustomFuncService implements ReferenceService {
 
     public CustomFunctionRepository getCustomRepo(){
         return customRepo;
-    }
-
-    public AnaliseExpression getAnaliser() {
-        return analiser;
-    }
-
-    public void setAnaliser(AnaliseExpression analiser) {
-        this.analiser = analiser;
     }
 }

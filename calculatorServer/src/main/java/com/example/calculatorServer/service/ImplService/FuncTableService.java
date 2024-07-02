@@ -54,6 +54,11 @@ public class FuncTableService implements ReferenceService {
         this.customRepo = customRepo;
     }
 
+    /**
+     * Создать новую запись по имени
+     * @param recordName
+     * @return
+     */
     public ResponseEntity<FuncTable> addNewRecord(String recordName){
         FuncTable record = new FuncTable();
         try{
@@ -72,28 +77,6 @@ public class FuncTableService implements ReferenceService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (DataIntegrityViolationException e){
             return new ResponseEntity<>(record, HttpStatus.CONFLICT);
-        }
-    }
-
-    public ResponseEntity addNewCellInRecord(String recordName, String cellName, String value){
-        try {
-            FuncTable record = ftRepo.findByRecordName(recordName).get(0);
-
-            FuncTableCell newCell = new FuncTableCell();
-            newCell.setCellName(cellName);
-            newCell.setExpression(value);
-
-            List<FuncTableCell> cells = record.getCells();
-            long sizeRecord = cells.size();
-            newCell.setCellCount(sizeRecord + 1);
-
-            cells.add(newCell);
-            record.setCells(cells);
-
-            ftRepo.save(record);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
