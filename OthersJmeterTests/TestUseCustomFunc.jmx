@@ -2,12 +2,14 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
-      <stringProp name="TestPlan.comments">Требуеться запустить calculatorService и functionRepositoryService </stringProp>
+      <stringProp name="TestPlan.comments">Требуеться запустить calculatorService и functionRepositoryService.
+Имеется два сценария: 
+1. Проверяет создание макросов (требуется отключить запрос LoadLib, включить Create fib_sum, Create fib_group, Create pow); 
+2. Проверят загрузку макросов из файла (требуется включить запрос LoadLib и отключить Create fib_sum, Create fib_group, Create pow); </stringProp>
       <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Create Funcs">
@@ -22,7 +24,7 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create fib_sum" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create fib_sum">
           <stringProp name="TestPlan.comments">Создаем функцию для посчета суммы элементов последней пары Фибоначчи </stringProp>
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8090</stringProp>
@@ -37,7 +39,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
             </collectionProp>
@@ -48,7 +50,7 @@
             <stringProp name="TestPlan.comments">Сравниваем код ошибки</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results" enabled="true">
+          <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -85,7 +87,7 @@
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -123,7 +125,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create fib_group" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create fib_group">
           <stringProp name="TestPlan.comments">Создаем функцию для посчета суммы элементов последней пары Фибоначчи </stringProp>
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8090</stringProp>
@@ -287,7 +289,7 @@
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -425,7 +427,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetFuncs" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetFuncs">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8090</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -439,7 +441,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -459,7 +461,7 @@
             <stringProp name="TestPlan.comments">Сравниваем код ошибки</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Create Lib JSON Assertion" enabled="true">
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Create Lib JSON Assertion">
             <stringProp name="JSON_PATH">$</stringProp>
             <stringProp name="EXPECTED_VALUE">[{&quot;id&quot;:1,&quot;name&quot;:&quot;fib_sum&quot;,&quot;countInputVars&quot;:3,&quot;steps&quot;:[{&quot;id&quot;:1,&quot;name&quot;:&quot;one&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:2,&quot;name&quot;:&quot;two&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:3,&quot;name&quot;:&quot;count&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:4,&quot;name&quot;:&quot;step_one_temp&quot;,&quot;expression&quot;:[&quot;step_one&quot;],&quot;expressionString&quot;:&quot;step_one&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:&quot;0&quot;,&quot;type&quot;:&quot;INNER&quot;},{&quot;id&quot;:5,&quot;name&quot;:&quot;step_one&quot;,&quot;expression&quot;:[&quot;step_two&quot;],&quot;expressionString&quot;:&quot;step_two&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;one&quot;],&quot;defaultValueString&quot;:&quot;one&quot;,&quot;type&quot;:&quot;INNER&quot;},{&quot;id&quot;:6,&quot;name&quot;:&quot;step_two&quot;,&quot;expression&quot;:[&quot;step_one_temp&quot;,&quot;+&quot;,&quot;step_two&quot;],&quot;expressionString&quot;:&quot;step_one_temp+step_two&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;two&quot;],&quot;defaultValueString&quot;:&quot;two&quot;,&quot;type&quot;:&quot;INNER&quot;},{&quot;id&quot;:7,&quot;name&quot;:&quot;sum&quot;,&quot;expression&quot;:[&quot;step_one&quot;,&quot;+&quot;,&quot;step_two&quot;],&quot;expressionString&quot;:&quot;step_one+step_two&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;one&quot;,&quot;+&quot;,&quot;two&quot;],&quot;defaultValueString&quot;:&quot;one+two&quot;,&quot;type&quot;:&quot;INNER&quot;}],&quot;repeatCount&quot;:&quot;count&quot;,&quot;typeSearch&quot;:&quot;RIGHT_SIDE&quot;,&quot;description&quot;:&quot;calculate sum of last group fibonachi&quot;},{&quot;id&quot;:2,&quot;name&quot;:&quot;fib_group&quot;,&quot;countInputVars&quot;:3,&quot;steps&quot;:[{&quot;id&quot;:8,&quot;name&quot;:&quot;one&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:9,&quot;name&quot;:&quot;two&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:10,&quot;name&quot;:&quot;count&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:11,&quot;name&quot;:&quot;step_one_temp&quot;,&quot;expression&quot;:[&quot;step_one&quot;],&quot;expressionString&quot;:&quot;step_one&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:&quot;0&quot;,&quot;type&quot;:&quot;INNER&quot;},{&quot;id&quot;:12,&quot;name&quot;:&quot;step_one&quot;,&quot;expression&quot;:[&quot;step_two&quot;],&quot;expressionString&quot;:&quot;step_two&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;one&quot;],&quot;defaultValueString&quot;:&quot;one&quot;,&quot;type&quot;:&quot;INNER&quot;},{&quot;id&quot;:13,&quot;name&quot;:&quot;step_two&quot;,&quot;expression&quot;:[&quot;step_one_temp&quot;,&quot;+&quot;,&quot;step_two&quot;],&quot;expressionString&quot;:&quot;step_one_temp+step_two&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;two&quot;],&quot;defaultValueString&quot;:&quot;two&quot;,&quot;type&quot;:&quot;INNER&quot;},{&quot;id&quot;:14,&quot;name&quot;:&quot;group&quot;,&quot;expression&quot;:[&quot;step_one&quot;,&quot;.&quot;,&quot;step_two&quot;],&quot;expressionString&quot;:&quot;step_one.step_two&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;one&quot;,&quot;.&quot;,&quot;two&quot;],&quot;defaultValueString&quot;:&quot;one.two&quot;,&quot;type&quot;:&quot;INNER&quot;}],&quot;repeatCount&quot;:&quot;count&quot;,&quot;typeSearch&quot;:&quot;RIGHT_SIDE&quot;,&quot;description&quot;:&quot;calculate last group fibonachi&quot;},{&quot;id&quot;:3,&quot;name&quot;:&quot;pow&quot;,&quot;countInputVars&quot;:2,&quot;steps&quot;:[{&quot;id&quot;:15,&quot;name&quot;:&quot;number&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:16,&quot;name&quot;:&quot;degree&quot;,&quot;expression&quot;:null,&quot;expressionString&quot;:null,&quot;value&quot;:[&quot;0&quot;],&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;0&quot;],&quot;defaultValueString&quot;:null,&quot;type&quot;:&quot;INPUT&quot;},{&quot;id&quot;:17,&quot;name&quot;:&quot;res&quot;,&quot;expression&quot;:[&quot;res&quot;,&quot;*&quot;,&quot;number&quot;],&quot;expressionString&quot;:&quot;res*number&quot;,&quot;value&quot;:null,&quot;workExpression&quot;:null,&quot;defaultValue&quot;:[&quot;number&quot;],&quot;defaultValueString&quot;:&quot;number&quot;,&quot;type&quot;:&quot;INNER&quot;}],&quot;repeatCount&quot;:&quot;degree&quot;,&quot;typeSearch&quot;:&quot;TWO_SIDES&quot;,&quot;description&quot;:&quot;power&quot;}]</stringProp>
             <boolProp name="JSONVALIDATION">true</boolProp>
@@ -545,7 +547,7 @@
           <hashTree/>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Test Custom Funtions On calculatorService" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Test Custom Funtions On calculatorService">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -656,7 +658,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsTest1" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsTest1">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -681,7 +683,7 @@
             <stringProp name="TestPlan.comments">Сравниваем код ошибки</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="-1493960345">388800.0</stringProp>
             </collectionProp>
@@ -692,7 +694,7 @@
             <stringProp name="TestPlan.comments">Сравниваем результат вычислений</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results" enabled="true">
+          <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -729,7 +731,7 @@
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -767,7 +769,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsTest2" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsTest2">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -792,7 +794,7 @@
             <stringProp name="TestPlan.comments">Сравниваем код ошибки</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="46852146">143.0</stringProp>
             </collectionProp>
@@ -840,7 +842,7 @@
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -878,7 +880,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsTest3" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsTest3">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -903,7 +905,7 @@
             <stringProp name="TestPlan.comments">Сравниваем код ошибки</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="-1165091347">result  is  21.0 . 34.0</stringProp>
             </collectionProp>
@@ -951,7 +953,7 @@
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>
@@ -990,7 +992,7 @@
           <hashTree/>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="CustomFuncsSpecialTest" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="CustomFuncsSpecialTest">
         <stringProp name="TestPlan.comments">В этом тесте мы проверяем ранее непредусмотренное мной особенность объединения переменных</stringProp>
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
@@ -1002,7 +1004,7 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Clear" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Clear">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1016,7 +1018,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
             </collectionProp>
@@ -1102,7 +1104,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add Y 1" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add Y 1">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1116,7 +1118,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
             </collectionProp>
@@ -1127,7 +1129,7 @@
             <stringProp name="TestPlan.comments">Сравниваем код ошибки</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="51">3</stringProp>
             </collectionProp>
@@ -1213,7 +1215,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add Y 2" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add Y 2">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1324,7 +1326,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add Y 3" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add Y 3">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1435,7 +1437,7 @@
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsSpecialTest" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomFuncsSpecialTest">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">8080</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1449,7 +1451,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Http Code Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="49586">200</stringProp>
             </collectionProp>
@@ -1460,7 +1462,7 @@
             <stringProp name="TestPlan.comments">Сравниваем код ошибки</stringProp>
           </ResponseAssertion>
           <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Cacluate Response Assertion">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="443909486">3.486784501E9</stringProp>
             </collectionProp>
